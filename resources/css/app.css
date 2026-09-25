@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Montserrat', sans-serif;
+    --font-sport: 'Barlow Condensed', 'Montserrat', sans-serif;
+}
+
+/* Custom athletic styles */
+.font-sport {
+    font-family: var(--font-sport);
+}
+
+.sport-stripe {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        #2563eb,
+        #2563eb 4px,
+        #1d4ed8 4px,
+        #1d4ed8 8px
+    );
+}
+
+.sport-dotted-bar {
+    background: repeating-linear-gradient(
+        90deg,
+        #3b82f6 0,
+        #3b82f6 6px,
+        #60a5fa 6px,
+        #60a5fa 12px
+    );
+}
