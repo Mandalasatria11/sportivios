@@ -25,7 +25,7 @@
             <!-- Call to Action Button -->
             <div class="mt-6 sm:mt-8">
                 <a 
-                    href="#featured" 
+                    href="{{ url('/product') }}" 
                     class="inline-flex items-center justify-center px-8 sm:px-10 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold tracking-wide bg-[#8ee0ec] text-slate-900 shadow-[0_4px_14px_rgba(142,224,236,0.4)] hover:bg-[#76d6e4] hover:shadow-[0_6px_20px_rgba(142,224,236,0.6)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                 >
                     Shop Now
