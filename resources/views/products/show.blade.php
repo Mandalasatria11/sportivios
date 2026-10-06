@@ -2,15 +2,15 @@
     <div class="bg-white min-h-screen pb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
             
-            <!-- Breadcrumb Navigation -->
+            <!-- Breadcrumb Navigation Matching Screenshot -->
             <nav class="flex items-center space-x-2 text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
                 <a href="{{ url('/') }}" class="hover:text-black transition">Home</a>
                 <span class="text-gray-400">&gt;</span>
                 <a href="{{ url('/product') }}" class="hover:text-black transition">Men</a>
                 <span class="text-gray-400">&gt;</span>
-                <a href="{{ url('/product/' . strtolower($product['category'])) }}" class="hover:text-black transition">{{ ucfirst($product['category']) }}</a>
+                <a href="{{ url('/product/shoes') }}" class="hover:text-black transition">Shoes</a>
                 <span class="text-gray-400">&gt;</span>
-                <span class="font-medium text-gray-900">{{ $product['name'] }}</span>
+                <span class="font-medium text-gray-900">{{ $product['name'] ?? 'AeroGlide Pro X' }}</span>
             </nav>
 
             <!-- Back to Catalog Link -->
@@ -22,27 +22,35 @@
             </div>
 
             <!-- Product Detail Main Section (2 Columns Grid) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start" x-data="productDetailHandler()">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                 
-                <!-- Left: Thumbnails + Main Image Gallery (5 cols on lg) -->
+                <!-- Left: Thumbnails + Main Image Gallery (7 cols on lg) -->
                 <div class="lg:col-span-7 flex flex-col sm:flex-row gap-4">
                     
                     <!-- Thumbnails Column (Left vertical) -->
                     <div class="flex sm:flex-col gap-3 order-2 sm:order-1 overflow-x-auto sm:overflow-visible">
-                        @foreach ($product['thumbnails'] as $index => $thumb)
+                        @php
+                            $thumbs = $product['thumbnails'] ?? [
+                                asset('images/products/shoe.jpg'),
+                                asset('images/products/shoe-sole.jpg'),
+                                asset('images/products/shoe-heel.jpg'),
+                                asset('images/products/shoe-action.jpg'),
+                            ];
+                        @endphp
+                        @foreach ($thumbs as $index => $thumb)
                             <button 
                                 type="button" 
                                 onclick="changeMainImage('{{ $thumb }}', {{ $index }})"
-                                class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 bg-gray-50 overflow-hidden flex-shrink-0 transition-all p-1"
+                                class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 bg-gray-50 overflow-hidden flex-shrink-0 transition-all p-1 {{ $index === 0 ? 'border-cyan-500 ring-2 ring-cyan-400' : 'border-gray-200 hover:border-gray-400' }}"
                                 id="thumb-btn-{{ $index }}"
                             >
-                                <img src="{{ $thumb }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-contain">
+                                <img src="{{ $thumb }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover rounded">
                             </button>
                         @endforeach
                     </div>
 
                     <!-- Main Display Image Container -->
-                    <div class="flex-1 order-1 sm:order-2 bg-[#f6f7f9] rounded-2xl p-6 sm:p-10 relative flex items-center justify-center min-h-[360px] sm:min-h-[460px] border border-gray-100 shadow-xs">
+                    <div class="flex-1 order-1 sm:order-2 bg-[#f6f7f9] rounded-2xl p-6 sm:p-10 relative flex items-center justify-center min-h-[380px] sm:min-h-[480px] border border-gray-100 shadow-2xs">
                         <!-- Badge Top Left -->
                         @if (!empty($product['badge']))
                             <div class="absolute top-4 left-4 z-10">
@@ -50,12 +58,18 @@
                                     {{ $product['badge'] }}
                                 </span>
                             </div>
+                        @else
+                            <div class="absolute top-4 left-4 z-10">
+                                <span class="bg-[#8ee0ec] text-[#044e54] text-[11px] font-black tracking-widest px-3 py-1 rounded uppercase shadow-xs">
+                                    NEW RELEASE
+                                </span>
+                            </div>
                         @endif
 
                         <img 
                             id="mainProductImage" 
-                            src="{{ $product['image'] }}" 
-                            alt="{{ $product['name'] }}" 
+                            src="{{ $product['image'] ?? asset('images/products/shoe.jpg') }}" 
+                            alt="{{ $product['name'] ?? 'AeroGlide Pro X' }}" 
                             class="w-full max-h-[380px] sm:max-h-[420px] object-contain transform transition-all duration-300"
                         >
                     </div>
@@ -68,13 +82,13 @@
                     <!-- Title & Price & Reviews -->
                     <div>
                         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 font-display">
-                            {{ $product['name'] }}
+                            {{ $product['name'] ?? 'AeroGlide Pro X' }}
                         </h1>
                         
                         <div class="mt-3 flex items-center justify-between">
                             <div class="flex items-baseline space-x-2">
                                 <span class="text-2xl sm:text-3xl font-extrabold text-gray-900">
-                                    ${{ number_format($product['price'], 2) }}
+                                    ${{ number_format($product['price'] ?? 129.99, 2) }}
                                 </span>
                                 @if (!empty($product['old_price']))
                                     <span class="text-base text-gray-400 line-through font-medium">
@@ -83,7 +97,7 @@
                                 @endif
                             </div>
 
-                            <!-- Star Rating -->
+                            <!-- Star Rating Matching Screenshot -->
                             <div class="flex items-center space-x-1">
                                 <div class="flex items-center text-amber-400">
                                     @for ($i = 0; $i < 5; $i++)
@@ -93,7 +107,7 @@
                                     @endfor
                                 </div>
                                 <span class="text-xs text-gray-600 font-semibold underline cursor-pointer ml-1">
-                                    {{ $product['rating'] }} ({{ $product['reviews'] }} Reviews)
+                                    {{ $product['rating'] ?? 4.8 }} ({{ $product['reviews'] ?? 124 }} Reviews)
                                 </span>
                             </div>
                         </div>
@@ -101,35 +115,54 @@
 
                     <!-- Short Description -->
                     <p class="text-xs sm:text-sm text-gray-600 leading-relaxed border-b border-gray-100 pb-5">
-                        {{ $product['description'] }}
+                        {{ $product['description'] ?? 'Engineered for relentless speed and supreme comfort. The AeroGlide Pro X features our responsive kinetic foam midsole and a breathable precision-knit upper, delivering a frictionless ride from 5K to marathon distances.' }}
                     </p>
 
-                    <!-- Color Selection -->
+                    <!-- Color Selection Matching Screenshot -->
                     <div>
                         <div class="flex justify-between text-xs font-bold text-gray-900 mb-2">
-                            <span>Color: <span id="selectedColorName" class="font-normal text-gray-600">{{ $product['colors'][0]['name'] ?? 'Phantom White / Cyber Cyan' }}</span></span>
+                            <span>Color: <span id="selectedColorName" class="font-normal text-gray-600">Phantom White / Cyber Cyan</span></span>
                         </div>
                         <div class="flex items-center space-x-3">
-                            @foreach ($product['colors'] as $cIndex => $col)
-                                <button 
-                                    type="button" 
-                                    onclick="selectColor('{{ $col['name'] }}', {{ $cIndex }})"
-                                    class="w-7 h-7 rounded-full border-2 p-0.5 transition flex items-center justify-center cursor-pointer shadow-xs"
-                                    id="color-btn-{{ $cIndex }}"
-                                    style="background-color: {{ $col['hex'] }};"
-                                    title="{{ $col['name'] }}"
-                                >
-                                    @if ($cIndex === 0)
-                                        <svg class="w-3.5 h-3.5 text-black stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="3">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
-                                        </svg>
-                                    @endif
-                                </button>
-                            @endforeach
+                            <!-- Color 1: Phantom White / Cyber Cyan (Selected with checkmark) -->
+                            <button 
+                                type="button" 
+                                onclick="selectColor('Phantom White / Cyber Cyan', this)"
+                                class="w-7 h-7 rounded-full border-2 border-black p-0.5 transition flex items-center justify-center cursor-pointer shadow-xs color-btn bg-[#f0fdfa]"
+                                title="Phantom White / Cyber Cyan"
+                            >
+                                <svg class="w-3.5 h-3.5 text-black stroke-current check-icon" fill="none" viewBox="0 0 24 24" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                </svg>
+                            </button>
+
+                            <!-- Color 2: Stealth Black -->
+                            <button 
+                                type="button" 
+                                onclick="selectColor('Stealth Black', this)"
+                                class="w-7 h-7 rounded-full border-2 border-transparent hover:border-gray-400 p-0.5 transition flex items-center justify-center cursor-pointer shadow-xs color-btn bg-[#111827]"
+                                title="Stealth Black"
+                            >
+                                <svg class="w-3.5 h-3.5 text-white stroke-current check-icon hidden" fill="none" viewBox="0 0 24 24" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                </svg>
+                            </button>
+
+                            <!-- Color 3: Neon Volt -->
+                            <button 
+                                type="button" 
+                                onclick="selectColor('Neon Volt', this)"
+                                class="w-7 h-7 rounded-full border-2 border-transparent hover:border-gray-400 p-0.5 transition flex items-center justify-center cursor-pointer shadow-xs color-btn bg-[#ccff00]"
+                                title="Neon Volt"
+                            >
+                                <svg class="w-3.5 h-3.5 text-black stroke-current check-icon hidden" fill="none" viewBox="0 0 24 24" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Size Selector -->
+                    <!-- Size Selector Matching Screenshot (Row 1: 5 items, Row 2: 4 items with 11.5 disabled) -->
                     <div>
                         <div class="flex justify-between items-center text-xs font-bold text-gray-900 mb-2">
                             <span>Size (US Men's)</span>
@@ -138,23 +171,32 @@
                             </a>
                         </div>
                         <div class="grid grid-cols-5 gap-2">
-                            @foreach ($product['sizes'] as $sIndex => $sz)
-                                @php
-                                    $isSelected = ($sz == '9.5');
-                                @endphp
-                                <button 
-                                    type="button" 
-                                    onclick="selectSize('{{ $sz }}', this)"
-                                    class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn {{ $isSelected ? 'border-black bg-black text-white shadow-xs' : 'border-gray-200 text-gray-800 hover:border-black bg-white' }}"
-                                >
-                                    {{ $sz }}
-                                </button>
-                            @endforeach
+                            <!-- 8 -->
+                            <button type="button" onclick="selectSize('8', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">8</button>
+                            <!-- 8.5 -->
+                            <button type="button" onclick="selectSize('8.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">8.5</button>
+                            <!-- 9 -->
+                            <button type="button" onclick="selectSize('9', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">9</button>
+                            <!-- 9.5 (Selected by default) -->
+                            <button type="button" onclick="selectSize('9.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-black bg-black text-white shadow-xs">9.5</button>
+                            <!-- 10 -->
+                            <button type="button" onclick="selectSize('10', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">10</button>
+                            <!-- 10.5 -->
+                            <button type="button" onclick="selectSize('10.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">10.5</button>
+                            <!-- 11 -->
+                            <button type="button" onclick="selectSize('11', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">11</button>
+                            <!-- 11.5 (Disabled & Crossed Out) -->
+                            <button type="button" disabled class="py-2.5 rounded-lg border text-xs font-medium text-gray-300 border-gray-100 bg-gray-50/70 cursor-not-allowed line-through">11.5</button>
+                            <!-- 12 -->
+                            <button type="button" onclick="selectSize('12', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">12</button>
                         </div>
                         
-                        <!-- Low Stock Indicator -->
-                        <div class="mt-2 text-[11px] font-semibold text-rose-600 flex items-center space-x-1">
-                            <span>ⓘ Only 2 left in Size <span id="activeSizeLabel">9.5</span></span>
+                        <!-- Low Stock Indicator (Red with Warning Icon) -->
+                        <div class="mt-2.5 text-[11px] font-semibold text-[#dc2626] flex items-center space-x-1.5">
+                            <svg class="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Only 2 left in Size <span id="activeSizeLabel">9.5</span></span>
                         </div>
                     </div>
 
@@ -174,7 +216,7 @@
                         <button 
                             type="button" 
                             onclick="alert('❤️ Added to your Wishlist!')"
-                            class="w-full py-3 bg-white border border-gray-300 hover:border-gray-900 text-gray-900 font-bold text-xs rounded-lg transition flex items-center justify-center space-x-2 shadow-xs"
+                            class="w-full py-3 bg-white border border-gray-300 hover:border-gray-900 text-gray-900 font-bold text-xs rounded-lg transition flex items-center justify-center space-x-2 shadow-2xs"
                         >
                             <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -183,10 +225,10 @@
                         </button>
                     </div>
 
-                    <!-- Accordion Sections -->
+                    <!-- Accordion Sections Matching Screenshot -->
                     <div class="border-t border-gray-200 pt-4 space-y-3">
                         
-                        <!-- Accordion 1: Technical Features -->
+                        <!-- Accordion 1: Technical Features (Expanded by Default) -->
                         <div class="border-b border-gray-100 pb-3">
                             <button 
                                 type="button" 
@@ -195,23 +237,19 @@
                             >
                                 <span>Technical Features</span>
                                 <svg id="acc-tech-icon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                                 </svg>
                             </button>
-                            <div id="acc-tech-content" class="mt-2 text-xs text-gray-600 space-y-1.5 leading-relaxed">
-                                @if (!empty($product['tech_features']))
-                                    <ul class="list-disc pl-4 space-y-1 text-gray-700">
-                                        @foreach ($product['tech_features'] as $tf)
-                                            <li>{{ $tf }}</li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <p>Responsive kinetic midsole with 85% energy return. Seamless Aero-Mesh upper for maximum cooling.</p>
-                                @endif
+                            <div id="acc-tech-content" class="mt-2.5 text-xs text-gray-600 space-y-1.5 leading-relaxed">
+                                <p><strong>Midsole:</strong> Kinetic-React Foam for 85% energy return.</p>
+                                <p><strong>Upper:</strong> Seamless Aero-Mesh for adaptive fit and cooling.</p>
+                                <p><strong>Outsole:</strong> High-abrasion carbon rubber zones for durability.</p>
+                                <p><strong>Weight:</strong> 8.2 oz (Men's Size 9).</p>
+                                <p><strong>Drop:</strong> 8mm (Heel: 34mm, Forefoot: 26mm).</p>
                             </div>
                         </div>
 
-                        <!-- Accordion 2: Shipping & Returns -->
+                        <!-- Accordion 2: Shipping & Returns (Collapsed by Default) -->
                         <div class="pb-2">
                             <button 
                                 type="button" 
@@ -219,7 +257,7 @@
                                 class="w-full flex items-center justify-between text-xs font-bold text-gray-900 py-1 text-left"
                             >
                                 <span>Shipping &amp; Returns</span>
-                                <svg id="acc-shipping-icon" class="w-4 h-4 transform transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg id="acc-shipping-icon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
@@ -261,8 +299,18 @@
             }
         }
 
-        function selectColor(name, index) {
+        function selectColor(name, el) {
             document.getElementById('selectedColorName').textContent = name;
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('border-black');
+                btn.classList.add('border-transparent');
+                const check = btn.querySelector('.check-icon');
+                if (check) check.classList.add('hidden');
+            });
+            el.classList.remove('border-transparent');
+            el.classList.add('border-black');
+            const check = el.querySelector('.check-icon');
+            if (check) check.classList.remove('hidden');
         }
 
         function selectSize(size, el) {
@@ -277,7 +325,11 @@
             const content = document.getElementById(`${id}-content`);
             const icon = document.getElementById(`${id}-icon`);
             content.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
+            if (content.classList.contains('hidden')) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />';
+            }
         }
 
         function addToCartAnimation() {
@@ -285,12 +337,7 @@
             text.textContent = 'ADDED TO CART! ✓';
             setTimeout(() => {
                 window.location.href = "{{ url('/cart') }}";
-            }, 700);
+            }, 600);
         }
-
-        // Initialize first thumbnail
-        document.addEventListener('DOMContentLoaded', () => {
-            changeMainImage("{{ $product['image'] }}", 0);
-        });
     </script>
 </x-layout>

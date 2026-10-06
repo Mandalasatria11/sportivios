@@ -17,7 +17,7 @@
                 <p class="text-xs text-gray-500 mt-1">Complete your order details below.</p>
             </div>
 
-            <form action="{{ url('/orders/SPV-894210') }}" method="GET" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <form action="{{ route('checkout.success') }}" method="GET" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 <!-- Shipping Address & Payment Forms (7 cols) -->
                 <div class="lg:col-span-7 space-y-6">

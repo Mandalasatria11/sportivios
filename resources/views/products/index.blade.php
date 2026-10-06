@@ -238,7 +238,7 @@
                     @if ($products->count() > 0)
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
                             @foreach ($products as $item)
-                                <div class="group bg-white rounded-xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden relative">
+                                <a href="{{ route('products.show', $item['id']) }}" class="group bg-white rounded-xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden relative block cursor-pointer">
                                     
                                     <!-- Product Image Container -->
                                     <div class="relative w-full aspect-square bg-[#f4f5f7] flex items-center justify-center p-4 overflow-hidden">
@@ -294,7 +294,7 @@
                                         </div>
                                     </div>
 
-                                </div>
+                                </a>
                             @endforeach
                         </div>
 

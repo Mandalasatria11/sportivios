@@ -2,11 +2,24 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-14 sm:h-16">
             
-            <!-- Left: Logo -->
+            <!-- Left: Logo
             <div class="flex-shrink-0 flex items-center">
                 <a href="{{ url('/') }}" class="text-xl sm:text-2xl font-black tracking-tight text-black font-display hover:opacity-90 transition flex items-center">
                     <span>SPORTIVIOS</span>
                 </a>
+            </div> -->
+            <div class="flex-shrink-0 flex items-center">
+                <a href="{{ url('/') }}" 
+                class="flex items-center gap-2 hover:opacity-90 transition">
+                <img
+                src="{{ asset('images/sportivios.jpg') }}"
+                alt="Sportivios Logo"
+                class="h-10 sm:h-12 w-auto object-cover"
+                >
+                <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
+                SPORTIVIOS
+                </span>
+            </a>
             </div>
 
             <!-- Center: Navigation Links -->
@@ -17,13 +30,13 @@
                     $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories';
                 @endphp
                 
-                <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-black border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Shoes
                 </a>
-                <a href="{{ url('/product/apparel') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isApparel ? 'text-black border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                <a href="{{ url('/product/apparel') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isApparel ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Apparel
                 </a>
-                <a href="{{ url('/product/accessories') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAccessories ? 'text-black border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                <a href="{{ url('/product/accessories') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAccessories ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Accessories
                 </a>
             </nav>
@@ -44,10 +57,10 @@
                 </button>
 
                 <!-- User Account / Login & Register Button -->
-                <div class="relative">
+                <div class="relative" x-data="{ userMenuOpen: false }">
                     <button 
                         type="button" 
-                        onclick="toggleAuthModal()" 
+                        @click="userMenuOpen = !userMenuOpen" 
                         class="flex items-center space-x-1.5 p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
                         id="userAuthBtn"
                         aria-label="User Account"
@@ -55,8 +68,46 @@
                         <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                         </svg>
-                        <span id="navUserBadge" class="hidden text-xs font-semibold text-gray-900 max-w-[90px] truncate sm:inline-block">Alex J.</span>
+                        <span id="navUserBadge" class="hidden text-xs font-semibold text-gray-900 max-w-[90px] truncate sm:inline-block">Peter P.</span>
                     </button>
+
+                    <!-- Dropdown Menu -->
+                    <div 
+                        x-show="userMenuOpen" 
+                        @click.away="userMenuOpen = false" 
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 text-left divide-y divide-gray-100"
+                        style="display: none;"
+                    >
+                        <div class="px-4 py-2.5">
+                            <p class="text-xs font-bold text-gray-900">Peter Parker</p>
+                            <p class="text-[11px] text-gray-500 truncate">parker@gmail.com</p>
+                        </div>
+                        <div class="py-1">
+                            <a href="{{ url('/profile') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                <span class="mr-2.5">👤</span> Profile Settings
+                            </a>
+                            <a href="{{ url('/orders') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                <span class="mr-2.5">📦</span> My Orders &amp; Tracking
+                            </a>
+                        </div>
+                        <div class="py-1">
+                            <a href="{{ url('/login') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                <span class="mr-2.5">🔑</span> Login Page
+                            </a>
+                            <a href="{{ url('/register') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                <span class="mr-2.5">📝</span> Join the Team (Register)
+                            </a>
+                            <button type="button" @click="userMenuOpen = false; toggleAuthModal()" class="w-full text-left flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                <span class="mr-2.5">⚡</span> Quick Demo Modal
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Shopping Cart Icon with Dummy Badge -->
@@ -93,20 +144,23 @@
             <a href="{{ url('/product/accessories') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAccessories ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
                 Accessories
             </a>
-            <div class="pt-2 border-t border-gray-100 mt-2 flex items-center justify-between px-3">
-                <button onclick="toggleAuthModal()" class="text-xs font-bold text-cyan-700 hover:underline">
-                    Login / Register (Dummy)
-                </button>
-                <a href="{{ url('/product') }}" class="text-xs text-gray-500">
-                    View All Shop
+            <div class="pt-2 border-t border-gray-100 mt-2 space-y-1">
+                <a href="{{ url('/profile') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    👤 Profile Settings (Peter Parker)
+                </a>
+                <a href="{{ url('/orders') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    📦 My Orders &amp; Delivery Tracking
+                </a>
+                <a href="{{ url('/login') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    🔑 Login
+                </a>
+                <a href="{{ url('/register') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    📝 Join the Team (Register)
                 </a>
             </div>
         </div>
 
     </div>
-
-    <!-- Sporty Decorative Blue Border Strip -->
-    <div class="header-blue-texture"></div>
 
     <!-- Search Overlay Modal -->
     <div id="searchModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-start justify-center pt-20 px-4">

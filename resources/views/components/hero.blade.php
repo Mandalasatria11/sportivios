@@ -2,8 +2,8 @@
     <!-- Stadium Background Image -->
     <div class="relative w-full min-h-[380px] sm:min-h-[460px] md:min-h-[520px] lg:min-h-[560px] flex items-center justify-center">
         <img 
-            src="{{ asset('images/stadium.jpg') }}" 
-            alt="Sportivios Stadium" 
+            src="{{ asset('images/Hero.jpg') }}" 
+            alt="Sportivios" 
             class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.78] contrast-[1.08]"
         />
         
@@ -14,7 +14,7 @@
         <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center flex flex-col items-center">
             <!-- Headline -->
             <h1 class="text-3xl sm:text-5xl md:text-6xl font-black italic tracking-wider text-white uppercase font-sport drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] leading-tight">
-                GEAR UP FO GREATNESS
+                GEAR UP FOR GREATNESS
             </h1>
 
             <!-- Subtitle -->

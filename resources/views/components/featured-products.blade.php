@@ -19,16 +19,18 @@
             
             <!-- 1. AeroSprint Pro X1 -->
             <x-product-card 
+                id="1"
                 badge="NEW"
                 badgeType="cyan"
                 :image="asset('images/products/shoe.jpg')"
-                title="AeroSprint Pro X1"
+                title="AeroGlide Pro X"
                 reviews="128"
-                price="$189.99"
+                price="$129.99"
             />
 
             <!-- 2. Velocity Wind Shield -->
             <x-product-card 
+                id="5"
                 :image="asset('images/products/jacket.jpg')"
                 title="Velocity Wind Shield"
                 reviews="84"
@@ -37,6 +39,7 @@
 
             <!-- 3. Titan Grip Gloves -->
             <x-product-card 
+                id="7"
                 badge="LIMITED STOCK"
                 badgeType="red"
                 :image="asset('images/products/gloves.jpg')"
@@ -47,6 +50,7 @@
 
             <!-- 4. Core Duffel Bag 40L -->
             <x-product-card 
+                id="8"
                 badge="SALE"
                 badgeType="red"
                 :image="asset('images/products/duffel.jpg')"

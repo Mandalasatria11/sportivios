@@ -25,9 +25,9 @@ class ProductController extends Controller
                 'image' => asset('images/products/shoe.jpg'),
                 'thumbnails' => [
                     asset('images/products/shoe.jpg'),
-                    asset('images/products/shoe.jpg'),
-                    asset('images/products/shoe.jpg'),
-                    asset('images/products/shoe.jpg'),
+                    asset('images/products/shoe-sole.jpg'),
+                    asset('images/products/shoe-heel.jpg'),
+                    asset('images/products/shoe-action.jpg'),
                 ],
                 'sizes' => ['8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12'],
                 'colors' => [
@@ -532,4 +532,88 @@ class ProductController extends Controller
             'order' => $order,
         ]);
     }
+
+    /**
+     * Display Profile Settings Page (Image 1).
+     */
+    public function profile()
+    {
+        $user = [
+            'name' => 'Andrew AKA Peter Parker',
+            'display_name' => 'PETER PARKER',
+            'email' => 'parker@gmail.com',
+            'phone' => '+1 (555) 019-2834',
+            'avatar' => asset('images/users/peter-parker.jpg'),
+            'membership' => "Pro Member Since '22",
+            'points' => '2,450 Points',
+            'address' => [
+                'street' => 'Jl. Jenderal Sudirman Kav. 45, Tower Aria Lt. 18 No. 1802',
+                'city' => 'Jakarta Selatan',
+                'postal_code' => '12930',
+            ],
+            'recent_orders' => [
+                [
+                    'order_no' => 'SP-8829',
+                    'date' => 'Oct 24, 2024',
+                    'status' => 'SHIPPED',
+                    'product_title' => 'AeroSprint Pro Runners',
+                    'subtitle' => 'Size 10.5',
+                    'price' => '$145.00',
+                    'image' => asset('images/products/shoe.jpg'),
+                    'tracking_url' => url('/orders/SPV-894210'),
+                ],
+                [
+                    'order_no' => 'SP-7401',
+                    'date' => 'Sep 12, 2024',
+                    'status' => 'DELIVERED',
+                    'product_title' => '2 Items',
+                    'subtitle' => 'Delivered to Jakarta Selatan',
+                    'price' => '$85.50',
+                    'image' => asset('images/products/tee.jpg'),
+                    'tracking_url' => url('/orders/SPV-882049'),
+                ],
+            ],
+        ];
+
+        return view('profile.index', compact('user'));
+    }
+
+    /**
+     * Display Payment / Order Success Page (Image 2).
+     */
+    public function checkoutSuccess()
+    {
+        $order = [
+            'order_no' => '#SP-894210',
+            'order_code' => 'SPV-894210',
+            'transaction_time' => '24 Okt 2024, 14:32',
+            'payment_method' => 'QRIS Instant',
+            'product_name' => 'AeroSprint Pro Elite Runners',
+            'product_variant' => 'EU 42 • Obsidian Black / Cyan • Qty: 1',
+            'product_price' => 'Rp 2.100.000',
+            'total_payment' => 'Rp 2.100.000',
+            'notification_email' => 'alex.vance@example.com',
+            'eta' => '26 - 28 Okt 2024',
+            'image' => asset('images/products/shoe.jpg'),
+        ];
+
+        return view('cart.success', compact('order'));
+    }
+
+    /**
+     * Display Login Page (Image 5).
+     */
+    public function login()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Display Register Page (Image 4).
+     */
+    public function register()
+    {
+        return view('auth.register');
+    }
 }
+

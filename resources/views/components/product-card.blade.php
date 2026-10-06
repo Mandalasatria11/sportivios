@@ -1,4 +1,6 @@
 @props([
+    'id' => null,
+    'href' => null,
     'badge' => null,
     'badgeType' => 'cyan', // 'cyan' or 'red'
     'image' => '',
@@ -10,7 +12,11 @@
     'oldPrice' => null,
 ])
 
-<div class="group bg-white rounded-lg border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden relative">
+@php
+    $targetUrl = $href ?? ($id ? url('/product/detail/' . $id) : url('/product/detail/1'));
+@endphp
+
+<a href="{{ $targetUrl }}" class="group bg-white rounded-lg border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden relative block cursor-pointer">
     
     <!-- Image & Badge Container -->
     <div class="relative w-full aspect-square bg-[#f8f9fa] flex items-center justify-center p-6 overflow-hidden">
@@ -22,7 +28,7 @@
                         {{ $badge }}
                     </span>
                 @else
-                    <span class="inline-block bg-[#8ee0ec]/50 text-[#0369a1] text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-xs uppercase tracking-wider shadow-xs">
+                    <span class="inline-block bg-[#8ee0ec]/60 text-[#044e54] text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-xs uppercase tracking-wider shadow-xs">
                         {{ $badge }}
                     </span>
                 @endif
@@ -78,4 +84,4 @@
         </div>
     </div>
 
-</div>
+</a>

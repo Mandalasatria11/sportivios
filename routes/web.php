@@ -24,6 +24,8 @@ Route::get('/cart', [ProductController::class, 'cart'])->name('cart');
 
 // Checkout Page
 Route::get('/checkout', [ProductController::class, 'checkout'])->name('checkout');
+Route::get('/checkout/success', [ProductController::class, 'checkoutSuccess'])->name('checkout.success');
+Route::get('/payment/success', [ProductController::class, 'checkoutSuccess'])->name('payment.success');
 
 // Delivery History / Order List Page (matching image 4)
 Route::get('/orders', [ProductController::class, 'orders'])->name('orders.index');
@@ -32,3 +34,11 @@ Route::get('/delivery', [ProductController::class, 'orders']);
 // Order Tracking Detail Page (matching image 3)
 Route::get('/orders/{id}', [ProductController::class, 'tracking'])->name('orders.tracking');
 Route::get('/tracking/{id?}', [ProductController::class, 'tracking']);
+
+// Profile Settings Page (Image 1)
+Route::get('/profile', [ProductController::class, 'profile'])->name('profile');
+Route::get('/account', [ProductController::class, 'profile'])->name('account');
+
+// Auth Pages (Image 4 & Image 5)
+Route::get('/login', [ProductController::class, 'login'])->name('login');
+Route::get('/register', [ProductController::class, 'register'])->name('register');
