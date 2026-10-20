@@ -9,11 +9,7 @@
                 <a href="{{ url('/product') }}" class="hover:text-black transition">Shop</a>
                 <span class="text-gray-400">&gt;</span>
                 <span class="font-medium text-gray-900">
-                    @if ($currentCategory)
-                        {{ ucfirst($currentCategory) }}
-                    @else
-                        All Products
-                    @endif
+                    {{ $currentCategoryTitle ?? 'All Products' }}
                 </span>
             </nav>
 
@@ -28,23 +24,45 @@
             <!-- Page Header Title & Description -->
             <div class="mb-8">
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[#0e4868] uppercase font-display">
-                    @if ($currentCategory)
-                        {{ $currentCategoryTitle }}
-                    @else
-                        PERFORMANCE GEAR
-                    @endif
+                    {{ $currentCategoryTitle ?? 'PERFORMANCE GEAR' }}
                 </h1>
                 <p class="mt-2 text-sm text-gray-600 max-w-3xl">
                     Discover our complete collection of professional-grade athletic equipment designed for peak performance.
                 </p>
             </div>
 
+            <!-- Mobile Filter Toggle Bar (Hidden on Desktop) -->
+            <div class="lg:hidden mb-4">
+                <button 
+                    type="button" 
+                    onclick="toggleMobileFilter()" 
+                    id="mobileFilterToggleBtn"
+                    class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-800 shadow-xs hover:border-gray-400 transition cursor-pointer"
+                >
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        <span>Filter Produk</span>
+                        @php
+                            $activeCount = count((array)$selectedCategories) + count((array)$selectedSizes) + (request('min_price') || request('max_price') ? 1 : 0);
+                        @endphp
+                        @if ($activeCount > 0)
+                            <span class="px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-extrabold">
+                                {{ $activeCount }}
+                            </span>
+                        @endif
+                    </div>
+                    <span id="mobileFilterStateText" class="text-[11px] text-cyan-700 font-semibold">Buka Filter &darr;</span>
+                </button>
+            </div>
+
             <!-- Main Layout: Sidebar Filters + Products Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
                 
-                <!-- Left Sidebar: Filters -->
-                <aside class="lg:col-span-1 bg-white p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] sticky top-20">
-                    <form id="filterForm" method="GET" action="{{ $currentCategory ? url('/product/' . $currentCategory) : url('/product') }}">
+                <!-- Left Sidebar: Filters (Hidden on Mobile by default, toggled via button) -->
+                <aside id="filterSidebar" class="hidden lg:block lg:col-span-1 bg-white p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] sticky top-20">
+                    <form id="filterForm" method="GET" action="{{ url('/product') }}">
                         @if (request('q'))
                             <input type="hidden" name="q" value="{{ request('q') }}">
                         @endif
@@ -54,35 +72,42 @@
 
                         <!-- Filter Header -->
                         <div class="flex items-center justify-between pb-4 border-b border-gray-100">
-                            <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider">FILTERS</h2>
-                            <a href="{{ $currentCategory ? url('/product/' . $currentCategory) : url('/product') }}" class="text-[11px] font-medium text-gray-400 hover:text-blue-600 transition">
-                                Clear All
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/>
+                                </svg>
+                                <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider">FILTERS</h2>
+                            </div>
+                            <a href="{{ url('/product') }}" class="text-[11px] font-medium text-gray-400 hover:text-cyan-600 transition">
+                                Reset All
                             </a>
                         </div>
 
                         <!-- Filter: Categories -->
                         <div class="py-5 border-b border-gray-100">
-                            <h3 class="text-xs font-bold text-gray-900 mb-3.5">Categories</h3>
+                            <div class="flex items-center justify-between mb-3.5">
+                                <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Categories</h3>
+                                <span class="text-[10px] text-gray-400">Pilih kategori</span>
+                            </div>
                             <div class="space-y-2.5">
                                 @php
                                     $categoryOptions = [
-                                        ['key' => 'shoes', 'label' => 'Running Shoes', 'url' => url('/product/shoes')],
-                                        ['key' => 'apparel', 'label' => 'Training Apparel', 'url' => url('/product/apparel')],
-                                        ['key' => 'accessories', 'label' => 'Gym Accessories', 'url' => url('/product/accessories')],
+                                        ['key' => 'shoes', 'label' => 'Running Shoes'],
+                                        ['key' => 'apparel', 'label' => 'Training Apparel'],
+                                        ['key' => 'accessories', 'label' => 'Gym Accessories'],
                                     ];
                                 @endphp
 
                                 @foreach ($categoryOptions as $cat)
                                     @php
-                                        $isChecked = ($currentCategory === $cat['key']) || in_array($cat['key'], (array)$selectedCategories);
+                                        $isChecked = in_array($cat['key'], (array)$selectedCategories);
                                     @endphp
-                                    <label class="flex items-center space-x-3 cursor-pointer group">
+                                    <label class="flex items-center space-x-3 cursor-pointer group select-none">
                                         <input 
                                             type="checkbox" 
                                             name="categories[]" 
                                             value="{{ $cat['key'] }}"
                                             {{ $isChecked ? 'checked' : '' }}
-                                            onchange="window.location.href = '{{ $cat['url'] }}'"
                                             class="w-4 h-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 accent-[#0891b2] cursor-pointer"
                                         >
                                         <span class="text-xs text-gray-700 group-hover:text-black {{ $isChecked ? 'font-semibold text-black' : '' }}">
@@ -95,7 +120,7 @@
 
                         <!-- Filter: Price Range -->
                         <div class="py-5 border-b border-gray-100">
-                            <h3 class="text-xs font-bold text-gray-900 mb-3.5">Price</h3>
+                            <h3 class="text-xs font-bold text-gray-900 mb-3.5 uppercase tracking-wider">Price</h3>
                             <div class="flex items-center space-x-2">
                                 <div class="relative flex-1">
                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">$</span>
@@ -119,14 +144,14 @@
                                     >
                                 </div>
                             </div>
-                            <button type="submit" class="mt-3 w-full py-1.5 bg-gray-900 hover:bg-black text-white text-[11px] font-semibold rounded-md transition shadow-xs">
-                                Apply Price
-                            </button>
                         </div>
 
                         <!-- Filter: Size -->
-                        <div class="pt-5">
-                            <h3 class="text-xs font-bold text-gray-900 mb-3.5">Size</h3>
+                        <div class="py-5">
+                            <div class="flex items-center justify-between mb-3.5">
+                                <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Size</h3>
+                                <span class="text-[10px] text-gray-400">Pilih ukuran</span>
+                            </div>
                             <div class="grid grid-cols-4 gap-2">
                                 @foreach (['S', 'M', 'L', 'XL'] as $sizeOption)
                                     @php
@@ -134,8 +159,9 @@
                                     @endphp
                                     <button 
                                         type="button"
-                                        onclick="toggleSize('{{ $sizeOption }}')"
-                                        class="py-2 text-xs font-semibold rounded border transition-all text-center {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                        data-size="{{ $sizeOption }}"
+                                        onclick="toggleSize('{{ $sizeOption }}', this)"
+                                        class="size-filter-btn py-2 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
                                     >
                                         {{ $sizeOption }}
                                     </button>
@@ -147,6 +173,25 @@
                                     <input type="hidden" name="size[]" value="{{ $s }}">
                                 @endforeach
                             </div>
+                        </div>
+
+                        <!-- Unified Filter Actions (Apply & Reset) -->
+                        <div class="pt-4 border-t border-gray-100 flex flex-col gap-2">
+                            <button 
+                                type="submit" 
+                                class="w-full py-2.5 bg-black hover:bg-gray-800 active:bg-gray-900 text-white text-xs font-bold rounded-lg transition-all duration-200 shadow-xs hover:shadow flex items-center justify-center space-x-1.5 cursor-pointer"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                                </svg>
+                                <span>Apply Filters</span>
+                            </button>
+                            <a 
+                                href="{{ url('/product') }}" 
+                                class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg text-center transition"
+                            >
+                                Clear All Filters
+                            </a>
                         </div>
 
                     </form>
@@ -162,29 +207,40 @@
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="text-xs text-gray-500 font-medium mr-1">Active Filters:</span>
 
-                            @if ($currentCategory)
+                            @php
+                                $catLabels = ['shoes' => 'Running Shoes', 'apparel' => 'Training Apparel', 'accessories' => 'Gym Accessories'];
+                            @endphp
+
+                            {{-- Selected Categories Pills --}}
+                            @foreach ((array)$selectedCategories as $catKey)
                                 @php
-                                    $catLabels = ['shoes' => 'Running Shoes', 'apparel' => 'Training Apparel', 'accessories' => 'Gym Accessories'];
-                                    $catLabel = $catLabels[$currentCategory] ?? ucfirst($currentCategory);
+                                    $label = $catLabels[$catKey] ?? ucfirst($catKey);
+                                    $remainingCats = array_values(array_diff((array)$selectedCategories, [$catKey]));
+                                    $removeCatQuery = request()->except('categories', 'category', 'page');
+                                    if (!empty($remainingCats)) {
+                                        $removeCatQuery['categories'] = $remainingCats;
+                                    }
+                                    $removeCatUrl = url('/product') . (!empty($removeCatQuery) ? '?' . http_build_query($removeCatQuery) : '');
                                 @endphp
-                                <a href="{{ url('/product') }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#e0f7fa] text-[#006064] hover:bg-[#b2ebf2] transition group">
-                                    <span>{{ $catLabel }}</span>
+                                <a href="{{ $removeCatUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#e0f7fa] text-[#006064] hover:bg-[#b2ebf2] transition group" title="Hapus filter {{ $label }}">
+                                    <span>{{ $label }}</span>
                                     <svg class="w-3 h-3 ml-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                 </a>
-                            @endif
+                            @endforeach
 
+                            {{-- Selected Sizes Pills --}}
                             @foreach ((array)$selectedSizes as $s)
                                 @php
-                                    $remainingSizes = array_diff((array)$selectedSizes, [$s]);
+                                    $remainingSizes = array_values(array_diff((array)$selectedSizes, [$s]));
                                     $removeSizeQuery = request()->except('size', 'page');
                                     if (!empty($remainingSizes)) {
                                         $removeSizeQuery['size'] = $remainingSizes;
                                     }
-                                    $removeSizeUrl = url()->current() . '?' . http_build_query($removeSizeQuery);
+                                    $removeSizeUrl = url()->current() . (!empty($removeSizeQuery) ? '?' . http_build_query($removeSizeQuery) : '');
                                 @endphp
-                                <a href="{{ $removeSizeUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#e0f7fa] text-[#006064] hover:bg-[#b2ebf2] transition group">
+                                <a href="{{ $removeSizeUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#e0f7fa] text-[#006064] hover:bg-[#b2ebf2] transition group" title="Hapus filter Size {{ $s }}">
                                     <span>Size: {{ $s }}</span>
                                     <svg class="w-3 h-3 ml-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -192,12 +248,13 @@
                                 </a>
                             @endforeach
 
+                            {{-- Selected Price Range Pill --}}
                             @if (request('min_price') || request('max_price'))
                                 @php
                                     $removePriceQuery = request()->except('min_price', 'max_price', 'page');
-                                    $removePriceUrl = url()->current() . '?' . http_build_query($removePriceQuery);
+                                    $removePriceUrl = url()->current() . (!empty($removePriceQuery) ? '?' . http_build_query($removePriceQuery) : '');
                                 @endphp
-                                <a href="{{ $removePriceUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                                <a href="{{ $removePriceUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" title="Hapus filter harga">
                                     <span>Price: ${{ request('min_price', 0) }} - ${{ request('max_price', '∞') }}</span>
                                     <svg class="w-3 h-3 ml-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -205,7 +262,8 @@
                                 </a>
                             @endif
 
-                            @if (!$currentCategory && empty($selectedSizes) && !request('min_price') && !request('max_price'))
+                            {{-- When no filters are active --}}
+                            @if (empty($selectedCategories) && empty($selectedSizes) && !request('min_price') && !request('max_price'))
                                 <span class="text-xs text-gray-400 italic">None (Showing All)</span>
                             @endif
                         </div>
@@ -371,22 +429,44 @@
 
     <!-- Client-side filter helpers -->
     <script>
-        function toggleSize(size) {
-            const form = document.getElementById('filterForm');
+        function toggleSize(size, btn) {
             const container = document.getElementById('sizeInputsContainer');
+            if (!container) return;
             
-            // Check if input exists
             const existingInput = container.querySelector(`input[value="${size}"]`);
             if (existingInput) {
                 existingInput.remove();
+                if (btn) {
+                    btn.classList.remove('border-cyan-500', 'bg-cyan-50', 'text-cyan-700', 'shadow-xs', 'active-size', 'font-bold');
+                    btn.classList.add('border-gray-200', 'text-gray-700', 'hover:border-gray-400', 'bg-white');
+                }
             } else {
                 const newInput = document.createElement('input');
                 newInput.type = 'hidden';
                 newInput.name = 'size[]';
                 newInput.value = size;
                 container.appendChild(newInput);
+                if (btn) {
+                    btn.classList.add('border-cyan-500', 'bg-cyan-50', 'text-cyan-700', 'shadow-xs', 'active-size', 'font-bold');
+                    btn.classList.remove('border-gray-200', 'text-gray-700', 'hover:border-gray-400', 'bg-white');
+                }
             }
-            form.submit();
+            // Fitur filter tidak langsung submit otomatis di sini,
+            // melainkan aktif setelah pengguna menekan tombol "Apply Filters"
+        }
+
+        function toggleMobileFilter() {
+            const sidebar = document.getElementById('filterSidebar');
+            const stateText = document.getElementById('mobileFilterStateText');
+            if (!sidebar) return;
+
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                if (stateText) stateText.innerHTML = 'Tutup Filter &uarr;';
+            } else {
+                sidebar.classList.add('hidden');
+                if (stateText) stateText.innerHTML = 'Buka Filter &darr;';
+            }
         }
 
         function handleSortChange(sortVal) {
