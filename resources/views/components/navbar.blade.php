@@ -1,4 +1,4 @@
-    <header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]" x-data="navHandler()">
+<header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]" x-data="navHandler()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16">
                 
