@@ -9,6 +9,7 @@ Route::get('/', function () {
 })->name('home');
 
 // Shop / Product Catalogue
+Route::get('/katalog', [ProductController::class, 'katalog'])->name('katalog');
 Route::get('/product', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product/shoes', fn(Illuminate\Http\Request $req) => (new ProductController)->index($req, 'shoes'));
 Route::get('/product/apparel', fn(Illuminate\Http\Request $req) => (new ProductController)->index($req, 'apparel'));
