@@ -1,5 +1,4 @@
 <header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]" x-data="navHandler()">
-<<<<<<< HEAD
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16">
                 
@@ -20,42 +19,6 @@
                     <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
                     SPORTIVIOS
                     </span>
-=======
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-14 sm:h-16">
-            
-            <!-- Left: Logo
-            <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" class="text-xl sm:text-2xl font-black tracking-tight text-black font-display hover:opacity-90 transition flex items-center">
-                    <span>SPORTIVIOS</span>
-                </a>
-            </div> -->
-            <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" 
-                class="flex items-center gap-2 hover:opacity-90 transition">
-                <img
-                src="{{ asset('images/sportivios.jpg') }}"
-                alt="Sportivios Logo"
-                class="h-10 sm:h-12 w-auto object-cover"
-                >
-                <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
-                SPORTIVIOS
-                </span>
-            </a>
-            </div>
-
-            <!-- Center: Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-8 lg:space-x-12">
-                @php
-                    $isKatalog = request()->is('katalog*');
-                    $isShoes = request()->is('product/shoes*') || request('category') === 'shoes';
-                    $isApparel = request()->is('product/apparel*') || request('category') === 'apparel';
-                    $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories';
-                @endphp
-                
-                <a href="{{ url('/katalog') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isKatalog ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                    Katalog
->>>>>>> 16f618656f8f2b52c239a4a241181ffdf5f734af
                 </a>
                 </div>
 
