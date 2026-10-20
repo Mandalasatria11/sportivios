@@ -139,6 +139,9 @@
 
         <!-- Mobile Drawer Navigation -->
         <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-3 space-y-1">
+            <a href="{{ url('/product') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAllProducts ? 'bg-cyan-50 text-cyan-800 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
+                All Products
+            </a>
             <a href="{{ url('/product/shoes') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isShoes ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
                 Shoes
             </a>
