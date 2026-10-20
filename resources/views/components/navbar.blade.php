@@ -1,5 +1,4 @@
 <header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]" x-data="navHandler()">
-<<<<<<< HEAD
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16">
                 
@@ -20,6 +19,7 @@
                     <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
                     SPORTIVIOS
                     </span>
+<<<<<<< HEAD
 =======
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-14 sm:h-16">
@@ -56,6 +56,8 @@
                 <a href="{{ url('/katalog') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isKatalog ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Katalog
 >>>>>>> 16f618656f8f2b52c239a4a241181ffdf5f734af
+=======
+>>>>>>> 08b475db85c3657c209330bf8eb5a98bf2e19a6c
                 </a>
                 </div>
 
