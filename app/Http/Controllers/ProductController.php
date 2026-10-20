@@ -256,12 +256,13 @@ class ProductController extends Controller
         $allProducts = collect(self::getDummyProducts());
 
         $selectedCategories = [];
-        if ($category) {
-            $selectedCategories = [$category];
-        } elseif ($request->has('categories')) {
-            $selectedCategories = is_array($request->categories) ? $request->categories : explode(',', $request->categories);
+        if ($request->has('categories')) {
+            $rawCats = is_array($request->categories) ? $request->categories : explode(',', $request->categories);
+            $selectedCategories = array_values(array_filter($rawCats));
         } elseif ($request->has('category')) {
             $selectedCategories = [$request->category];
+        } elseif ($category) {
+            $selectedCategories = [$category];
         }
 
         $filtered = $allProducts;
@@ -335,7 +336,14 @@ class ProductController extends Controller
             'accessories' => 'Accessories Collection',
         ];
 
-        $currentCategoryTitle = $category ? ($categoryTitles[$category] ?? ucfirst($category)) : 'Performance Gear';
+        if ($category) {
+            $currentCategoryTitle = $categoryTitles[$category] ?? ucfirst($category);
+        } elseif (count($selectedCategories) === 1) {
+            $firstCat = strtolower($selectedCategories[0]);
+            $currentCategoryTitle = $categoryTitles[$firstCat] ?? ucfirst($firstCat) . ' Collection';
+        } else {
+            $currentCategoryTitle = 'Performance Gear';
+        }
 
         return view('products.index', [
             'products' => $paginatedProducts,
