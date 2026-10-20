@@ -25,11 +25,15 @@
             <!-- Center: Navigation Links -->
             <nav class="hidden md:flex items-center space-x-8 lg:space-x-12">
                 @php
+                    $isKatalog = request()->is('katalog*');
                     $isShoes = request()->is('product/shoes*') || request('category') === 'shoes';
                     $isApparel = request()->is('product/apparel*') || request('category') === 'apparel';
                     $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories';
                 @endphp
                 
+                <a href="{{ url('/katalog') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isKatalog ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    Katalog
+                </a>
                 <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Shoes
                 </a>

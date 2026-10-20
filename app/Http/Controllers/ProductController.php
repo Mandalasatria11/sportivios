@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -349,6 +350,15 @@ class ProductController extends Controller
             'searchQuery' => $request->input('q', ''),
             'totalCount' => $totalItems,
         ]);
+    }
+
+    /**
+     * Display product catalog using Eloquent ORM (Tugas LKPD Praktikum).
+     */
+    public function katalog()
+    {
+        $products = Product::all();
+        return view('katalog', compact('products'));
     }
 
     /**
