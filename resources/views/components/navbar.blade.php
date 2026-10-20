@@ -25,11 +25,15 @@
             <!-- Center: Navigation Links -->
             <nav class="hidden md:flex items-center space-x-8 lg:space-x-12">
                 @php
-                    $isShoes = request()->is('product/shoes*') || request('category') === 'shoes';
-                    $isApparel = request()->is('product/apparel*') || request('category') === 'apparel';
-                    $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories';
+                    $isAllProducts = (request()->is('product') && !request()->is('product/*') && !request('category') && !request('categories'));
+                    $isShoes = request()->is('product/shoes*') || request('category') === 'shoes' || in_array('shoes', (array)request('categories', []));
+                    $isApparel = request()->is('product/apparel*') || request('category') === 'apparel' || in_array('apparel', (array)request('categories', []));
+                    $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories' || in_array('accessories', (array)request('categories', []));
                 @endphp
                 
+                <a href="{{ url('/product') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAllProducts ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    All Products
+                </a>
                 <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Shoes
                 </a>
@@ -135,6 +139,9 @@
 
         <!-- Mobile Drawer Navigation -->
         <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-3 space-y-1">
+            <a href="{{ url('/product') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAllProducts ? 'bg-cyan-50 text-cyan-800 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
+                All Products
+            </a>
             <a href="{{ url('/product/shoes') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isShoes ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
                 Shoes
             </a>
