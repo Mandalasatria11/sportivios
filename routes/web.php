@@ -16,9 +16,10 @@ Route::get('/product/apparel', fn(Illuminate\Http\Request $req) => (new ProductC
 Route::get('/product/accessories', fn(Illuminate\Http\Request $req) => (new ProductController)->index($req, 'accessories'));
 Route::get('/product/accecoris', fn(Illuminate\Http\Request $req) => (new ProductController)->index($req, 'accessories'));
 
-// Product Detail Page (matching image 1 & 2)
-Route::get('/product/detail/{id?}', [ProductController::class, 'show'])->name('products.show');
-Route::get('/product/view/{id?}', [ProductController::class, 'show']);
+// Product Detail Page (LKPD P6 Dynamic Routing)
+Route::get('/detail/{id}', [ProductController::class, 'show'])->name('products.detail');
+Route::get('/product/detail/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/product/view/{id}', [ProductController::class, 'show']);
 
 // Shopping Cart Page (matching image 5)
 Route::get('/cart', [ProductController::class, 'cart'])->name('cart');
