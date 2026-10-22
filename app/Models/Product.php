@@ -15,4 +15,12 @@ class Product extends Model
         'price',
         'image',
     ];
+
+    /**
+     * Relasi ke model Transaction (One-to-Many).
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

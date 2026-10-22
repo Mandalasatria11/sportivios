@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -370,13 +372,20 @@ class ProductController extends Controller
     }
 
     /**
-     * Display single product detail page (LKPD P6 - Dynamic Routing & findOrFail).
+     * Display single product detail page.
      */
-    public function show($id)
+    public function show($id = 1)
     {
-        $product = Product::findOrFail($id);
+        $products = collect(self::getDummyProducts());
+        $product = $products->firstWhere('id', (int)$id) ?? $products->first();
 
-        return view('detail', compact('product'));
+        // Suggested related items
+        $relatedProducts = $products->where('id', '!=', $product['id'])->take(4);
+
+        return view('products.show', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+        ]);
     }
 
     /**
@@ -414,11 +423,85 @@ class ProductController extends Controller
     }
 
     /**
-     * Display Checkout page.
+     * Display checkout form for a specific product (LKPD Pertemuan 7).
      */
-    public function checkout()
+    public function checkout($id = 1)
     {
-        return view('cart.checkout');
+        $product = Product::find($id) ?? Product::first();
+
+        return view('checkout', compact('product'));
+    }
+
+    /**
+     * Process checkout transaction and insert into database (LKPD Pertemuan 7).
+     */
+    public function storeTransaction(Request $request)
+    {
+        // 1. Validasi input formulir transaksi
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'buyer_name' => 'required|string|max:255',
+            'buyer_phone' => 'required|string|max:50',
+            'buyer_address' => 'required|string',
+            'courier' => 'required|string',
+            'quantity' => 'required|integer|min:1',
+        ], [
+            'product_id.required' => 'Produk tidak valid.',
+            'product_id.exists' => 'Produk yang dipilih tidak ditemukan di database.',
+            'buyer_name.required' => 'Nama lengkap pembeli wajib diisi.',
+            'buyer_phone.required' => 'Nomor Telepon/WhatsApp wajib diisi.',
+            'buyer_address.required' => 'Alamat lengkap pengiriman wajib diisi.',
+            'courier.required' => 'Silakan pilih jasa kurir pengiriman.',
+            'quantity.required' => 'Jumlah pembelian wajib diisi.',
+            'quantity.min' => 'Jumlah pembelian minimal 1 item.',
+        ]);
+
+        // 2. Keamanan Harga: Mengambil harga produk langsung dari database
+        $product = Product::findOrFail($validated['product_id']);
+        $originalPrice = (float) $product->price;
+
+        // 3. Logika Ongkir & Total Pembayaran
+        $courierRates = [
+            'JNE' => 22000,
+            'J&T' => 20000,
+            'SiCepat' => 19000,
+            'Pos Indonesia' => 18000,
+        ];
+        $courier = $validated['courier'];
+        $shippingCost = $courierRates[$courier] ?? 20000;
+        $quantity = (int) $validated['quantity'];
+        $totalPrice = ($originalPrice * $quantity) + $shippingCost;
+
+        // 4. Generate invoice unik dengan format INV-2026-XXXX
+        do {
+            $invoiceCode = 'INV-2026-' . strtoupper(Str::random(4));
+        } while (Transaction::where('invoice_code', $invoiceCode)->exists());
+
+        // 5. Simpan transaksi ke database menggunakan Eloquent ORM
+        $transaction = Transaction::create([
+            'invoice_code' => $invoiceCode,
+            'product_id' => $product->id,
+            'buyer_name' => $validated['buyer_name'],
+            'buyer_phone' => $validated['buyer_phone'],
+            'buyer_address' => $validated['buyer_address'],
+            'courier' => $courier,
+            'shipping_cost' => $shippingCost,
+            'quantity' => $quantity,
+            'total_price' => $totalPrice,
+        ]);
+
+        // 6. Redirect ke halaman invoice berhasil
+        return redirect()->route('checkout.success', $transaction->id);
+    }
+
+    /**
+     * Display successful transaction invoice (LKPD Pertemuan 7).
+     */
+    public function success($id)
+    {
+        $transaction = Transaction::with('product')->findOrFail($id);
+
+        return view('berhasil', compact('transaction'));
     }
 
     /**

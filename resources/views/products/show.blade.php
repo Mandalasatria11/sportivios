@@ -200,8 +200,19 @@
                         </div>
                     </div>
 
-                    <!-- CTA Buttons (Add to Cart & Wishlist) -->
+                    <!-- CTA Buttons (Add to Cart, Checkout, Wishlist) -->
                     <div class="space-y-3 pt-2">
+                        <!-- Direct Checkout Button -->
+                        <a 
+                            href="{{ url('/checkout/' . ($product['id'] ?? 1)) }}"
+                            class="w-full py-3.5 bg-gray-900 hover:bg-cyan-600 active:bg-cyan-700 text-white font-black uppercase text-xs sm:text-sm rounded-lg tracking-wider transition-all shadow-md flex items-center justify-center space-x-2 text-center"
+                        >
+                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
+                            </svg>
+                            <span>BELI SEKARANG (CHECKOUT)</span>
+                        </a>
+
                         <button 
                             type="button" 
                             onclick="addToCartAnimation()"
