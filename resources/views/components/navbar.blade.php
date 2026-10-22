@@ -1,101 +1,59 @@
-<header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]" x-data="navHandler()">
-<<<<<<< HEAD
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-14 sm:h-16">
-                
-                <!-- Left: Logo
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{{ url('/') }}" class="text-xl sm:text-2xl font-black tracking-tight text-black font-display hover:opacity-90 transition flex items-center">
-                        <span>SPORTIVIOS</span>
-                    </a>
-                </div> -->
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="{{ url('/') }}" 
-                    class="flex items-center gap-2 hover:opacity-90 transition">
-                    <img
-                    src="{{ asset('images/sportivios.jpg') }}"
-                    alt="Sportivios Logo"
-                    class="h-10 sm:h-12 w-auto object-cover"
-                    >
-                    <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
-                    SPORTIVIOS
-                    </span>
-=======
+<header class="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-14 sm:h-16">
             
-            <!-- Left: Logo
+            <!-- Left: Logo -->
             <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" class="text-xl sm:text-2xl font-black tracking-tight text-black font-display hover:opacity-90 transition flex items-center">
-                    <span>SPORTIVIOS</span>
+                <a href="{{ url('/') }}" class="flex items-center gap-2 hover:opacity-90 transition">
+                    <img
+                        src="{{ asset('images/sportivios.jpg') }}"
+                        alt="Sportivios Logo"
+                        class="h-10 sm:h-12 w-auto object-cover"
+                    >
+                    <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
+                        SPORTIVIOS
+                    </span>
                 </a>
-            </div> -->
-            <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" 
-                class="flex items-center gap-2 hover:opacity-90 transition">
-                <img
-                src="{{ asset('images/sportivios.jpg') }}"
-                alt="Sportivios Logo"
-                class="h-10 sm:h-12 w-auto object-cover"
-                >
-                <span class="text-xl sm:text-2xl font-black tracking-tight text-primary font-display">
-                SPORTIVIOS
-                </span>
-            </a>
             </div>
 
             <!-- Center: Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-8 lg:space-x-12">
+            <nav class="hidden md:flex items-center space-x-6 lg:space-x-10">
                 @php
                     $isKatalog = request()->is('katalog*');
-                    $isShoes = request()->is('product/shoes*') || request('category') === 'shoes';
-                    $isApparel = request()->is('product/apparel*') || request('category') === 'apparel';
-                    $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories';
+                    $isAllProducts = (request()->is('product') && !request()->is('product/*') && !request('category') && !request('categories'));
+                    $isShoes = request()->is('product/shoes*') || request('category') === 'shoes' || in_array('shoes', (array)request('categories', []));
+                    $isApparel = request()->is('product/apparel*') || request('category') === 'apparel' || in_array('apparel', (array)request('categories', []));
+                    $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories' || in_array('accessories', (array)request('categories', []));
                 @endphp
                 
-                <a href="{{ url('/katalog') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isKatalog ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                    Katalog
->>>>>>> 16f618656f8f2b52c239a4a241181ffdf5f734af
+                <a href="{{ url('/product') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAllProducts ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    All Products
                 </a>
-                </div>
+                <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    Shoes
+                </a>
+                <a href="{{ url('/product/apparel') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isApparel ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    Apparel
+                </a>
+                <a href="{{ url('/product/accessories') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAccessories ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    Accessories
+                </a>
+            </nav>
 
-                <!-- Center: Navigation Links -->
-                <nav class="hidden md:flex items-center space-x-8 lg:space-x-12">
-                    @php
-                        $isAllProducts = (request()->is('product') && !request()->is('product/*') && !request('category') && !request('categories'));
-                        $isShoes = request()->is('product/shoes*') || request('category') === 'shoes' || in_array('shoes', (array)request('categories', []));
-                        $isApparel = request()->is('product/apparel*') || request('category') === 'apparel' || in_array('apparel', (array)request('categories', []));
-                        $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories' || in_array('accessories', (array)request('categories', []));
-                    @endphp
-                    
-                    <a href="{{ url('/product') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAllProducts ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                        All Products
-                    </a>
-                    <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                        Shoes
-                    </a>
-                    <a href="{{ url('/product/apparel') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isApparel ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                        Apparel
-                    </a>
-                    <a href="{{ url('/product/accessories') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAccessories ? 'text-primary border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
-                        Accessories
-                    </a>
-                </nav>
-
-                <!-- Right: Icons (Search, User Auth, Cart) & Mobile Hamburger -->
-                <div class="flex items-center space-x-3 sm:space-x-4 text-gray-900">
-                    
-                    <!-- Search Button -->
-                    <button 
-                        type="button" 
-                        onclick="toggleSearchModal()"
-                        class="p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
-                        aria-label="Search"
-                    >
-                        <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-                        </svg>
-                    </button>
+            <!-- Right: Icons (Search, User Auth, Cart) & Mobile Hamburger -->
+            <div class="flex items-center space-x-3 sm:space-x-4 text-gray-900">
+                
+                <!-- Search Button -->
+                <button 
+                    type="button" 
+                    onclick="toggleSearchModal()"
+                    class="p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
+                    aria-label="Search"
+                >
+                    <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                    </svg>
+                </button>
 
                     <!-- User Account / Login & Register Button -->
                     <div class="relative" x-data="{ userMenuOpen: false }">
