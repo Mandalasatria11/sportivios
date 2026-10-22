@@ -370,20 +370,13 @@ class ProductController extends Controller
     }
 
     /**
-     * Display single product detail page.
+     * Display single product detail page (LKPD P6 - Dynamic Routing & findOrFail).
      */
-    public function show($id = 1)
+    public function show($id)
     {
-        $products = collect(self::getDummyProducts());
-        $product = $products->firstWhere('id', (int)$id) ?? $products->first();
+        $product = Product::findOrFail($id);
 
-        // Suggested related items
-        $relatedProducts = $products->where('id', '!=', $product['id'])->take(4);
-
-        return view('products.show', [
-            'product' => $product,
-            'relatedProducts' => $relatedProducts,
-        ]);
+        return view('detail', compact('product'));
     }
 
     /**

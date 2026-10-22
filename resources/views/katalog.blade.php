@@ -30,7 +30,7 @@
                     <div class="group bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
                         
                         <!-- Product Image Container -->
-                        <div class="relative w-full aspect-square bg-[#f8fafc] flex items-center justify-center p-6 overflow-hidden">
+                        <a href="{{ route('products.detail', $product->id) }}" class="relative w-full aspect-square bg-[#f8fafc] flex items-center justify-center p-6 overflow-hidden block">
                             <span class="absolute top-3 left-3 bg-[#0891b2] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
                                 Original
                             </span>
@@ -41,14 +41,16 @@
                                 class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
                                 loading="lazy"
                             />
-                        </div>
+                        </a>
 
                         <!-- Product Information Details -->
                         <div class="p-5 flex flex-col flex-grow justify-between bg-white border-t border-gray-50">
                             <div>
-                                <h2 class="text-base font-bold text-gray-900 tracking-tight group-hover:text-cyan-600 transition line-clamp-1">
-                                    {{ $product->name }}
-                                </h2>
+                                <a href="{{ route('products.detail', $product->id) }}">
+                                    <h2 class="text-base font-bold text-gray-900 tracking-tight group-hover:text-cyan-600 transition line-clamp-1">
+                                        {{ $product->name }}
+                                    </h2>
+                                </a>
                                 
                                 <p class="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">
                                     {{ $product->description }}
@@ -63,9 +65,9 @@
                                         Rp {{ number_format($product->price, 0, ',', '.') }}
                                     </span>
                                 </div>
-                                <button type="button" class="inline-flex items-center justify-center px-3.5 py-2 bg-gray-900 hover:bg-cyan-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors duration-200">
-                                    Beli Sekarang
-                                </button>
+                                <a href="{{ route('products.detail', $product->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-900 hover:bg-cyan-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors duration-200">
+                                    Lihat Detail
+                                </a>
                             </div>
                         </div>
 
