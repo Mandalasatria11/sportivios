@@ -57,8 +57,13 @@
                 <!-- Keamanan CSRF: Wajib menyertakan direktif @csrf untuk mencegah serangan Cross-Site Request Forgery -->
                 @csrf
 
-                <!-- Hidden Input: Product ID -->
+                @php
+                    $selectedSize = request('size') ?: old('size', $product->default_size);
+                @endphp
+
+                <!-- Hidden Inputs: Product ID & Size -->
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+                <input type="hidden" name="size" value="{{ $selectedSize }}">
 
                 <!-- Left Column (Cols 1-7): Data Pembeli & Kurir -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-[0_4px_25px_rgba(0,0,0,0.04)] space-y-6">
@@ -80,12 +85,12 @@
                         <label for="buyer_name" class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                             Nama Lengkap Pembeli <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="buyer_name" 
-                            name="buyer_name" 
-                            value="{{ old('buyer_name') }}" 
-                            required 
+                        <input
+                            type="text"
+                            id="buyer_name"
+                            name="buyer_name"
+                            value="{{ old('buyer_name', Auth::check() ? Auth::user()->name : '') }}"
+                            required
                             placeholder="Contoh: Budi Santoso"
                             class="w-full px-4 py-3 rounded-xl border @error('buyer_name') border-red-500 bg-red-50/30 @else border-gray-200 @enderror focus:border-cyan-600 focus:ring-2 focus:ring-cyan-500/20 text-sm text-gray-900 transition outline-none"
                         >
@@ -101,12 +106,12 @@
                         <label for="buyer_phone" class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                             Nomor Telepon / WhatsApp <span class="text-red-500">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            id="buyer_phone" 
-                            name="buyer_phone" 
-                            value="{{ old('buyer_phone') }}" 
-                            required 
+                        <input
+                            type="text"
+                            id="buyer_phone"
+                            name="buyer_phone"
+                            value="{{ old('buyer_phone', Auth::check() ? Auth::user()->phone : '') }}"
+                            required
                             placeholder="Contoh: 081234567890"
                             class="w-full px-4 py-3 rounded-xl border @error('buyer_phone') border-red-500 bg-red-50/30 @else border-gray-200 @enderror focus:border-cyan-600 focus:ring-2 focus:ring-cyan-500/20 text-sm text-gray-900 transition outline-none"
                         >
@@ -122,14 +127,14 @@
                         <label for="buyer_address" class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                             Alamat Lengkap Pengiriman <span class="text-red-500">*</span>
                         </label>
-                        <textarea 
-                            id="buyer_address" 
-                            name="buyer_address" 
-                            rows="3" 
-                            required 
+                        <textarea
+                            id="buyer_address"
+                            name="buyer_address"
+                            rows="3"
+                            required
                             placeholder="Masukkan nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, dan kode pos..."
                             class="w-full px-4 py-3 rounded-xl border @error('buyer_address') border-red-500 bg-red-50/30 @else border-gray-200 @enderror focus:border-cyan-600 focus:ring-2 focus:ring-cyan-500/20 text-sm text-gray-900 transition outline-none resize-none"
-                        >{{ old('buyer_address') }}</textarea>
+                        >{{ old('buyer_address', Auth::check() ? Auth::user()->address : '') }}</textarea>
                         @error('buyer_address')
                             <p class="text-xs text-red-600 mt-1.5 flex items-center">
                                 <span>{{ $message }}</span>
@@ -240,7 +245,14 @@
                                 <img src="{{ $imgSrc }}" alt="{{ $product->name }}" class="w-full h-full object-contain">
                             </div>
                             <div class="flex-1 min-w-0">
-                                <span class="text-[10px] uppercase font-bold text-cyan-600 tracking-wider">Item Terpilih</span>
+                                <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                                    <span class="text-[9px] uppercase font-bold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200 tracking-wider">
+                                        {{ $product->category_label }}
+                                    </span>
+                                    <span class="text-[9px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                        Ukuran: {{ $selectedSize }}
+                                    </span>
+                                </div>
                                 <h3 class="text-sm font-bold text-gray-900 truncate">
                                     {{ $product->name }}
                                 </h3>

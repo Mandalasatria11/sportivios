@@ -120,53 +120,156 @@
 
                         <!-- Filter: Price Range -->
                         <div class="py-5 border-b border-gray-100">
-                            <h3 class="text-xs font-bold text-gray-900 mb-3.5 uppercase tracking-wider">Price</h3>
+                            <h3 class="text-xs font-bold text-gray-900 mb-3.5 uppercase tracking-wider">Harga (IDR)</h3>
                             <div class="flex items-center space-x-2">
                                 <div class="relative flex-1">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">$</span>
-                                    <input 
-                                        type="number" 
-                                        name="min_price" 
-                                        value="{{ request('min_price') }}" 
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] font-bold">Rp</span>
+                                    <input
+                                        type="number"
+                                        name="min_price"
+                                        value="{{ request('min_price') }}"
                                         placeholder="Min"
-                                        class="w-full pl-6 pr-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                                        step="50000"
+                                        class="w-full pl-8 pr-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
                                     >
                                 </div>
                                 <span class="text-gray-400 text-xs">-</span>
                                 <div class="relative flex-1">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">$</span>
-                                    <input 
-                                        type="number" 
-                                        name="max_price" 
-                                        value="{{ request('max_price') }}" 
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] font-bold">Rp</span>
+                                    <input
+                                        type="number"
+                                        name="max_price"
+                                        value="{{ request('max_price') }}"
                                         placeholder="Max"
-                                        class="w-full pl-6 pr-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                                        step="50000"
+                                        class="w-full pl-8 pr-2 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
                                     >
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Filter: Size -->
+                        <!-- Filter: Size System -->
                         <div class="py-5">
                             <div class="flex items-center justify-between mb-3.5">
-                                <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Size</h3>
+                                <h3 class="text-xs font-bold text-gray-900 uppercase tracking-wider">Ukuran (Size)</h3>
                                 <span class="text-[10px] text-gray-400">Pilih ukuran</span>
                             </div>
-                            <div class="grid grid-cols-4 gap-2">
-                                @foreach (['S', 'M', 'L', 'XL'] as $sizeOption)
-                                    @php
-                                        $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
-                                    @endphp
-                                    <button 
-                                        type="button"
-                                        data-size="{{ $sizeOption }}"
-                                        onclick="toggleSize('{{ $sizeOption }}', this)"
-                                        class="size-filter-btn py-2 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
-                                    >
-                                        {{ $sizeOption }}
-                                    </button>
-                                @endforeach
-                            </div>
+
+                            @if(($currentCategory ?? '') === 'shoes')
+                                <!-- Mode Sepatu Saja: 39 - 44 -->
+                                <div class="mb-2">
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">Ukuran Sepatu (EU):</span>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        @foreach (['39', '40', '41', '42', '43', '44'] as $sizeOption)
+                                            @php
+                                                $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
+                                            @endphp
+                                            <button
+                                                type="button"
+                                                data-size="{{ $sizeOption }}"
+                                                onclick="toggleSize('{{ $sizeOption }}', this)"
+                                                class="size-filter-btn py-2 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                            >
+                                                {{ $sizeOption }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @elseif(($currentCategory ?? '') === 'apparel')
+                                <!-- Mode Pakaian Saja: S - XXL -->
+                                <div class="mb-2">
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">Ukuran Pakaian (Letter):</span>
+                                    <div class="grid grid-cols-5 gap-1.5">
+                                        @foreach (['S', 'M', 'L', 'XL', 'XXL'] as $sizeOption)
+                                            @php
+                                                $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
+                                            @endphp
+                                            <button
+                                                type="button"
+                                                data-size="{{ $sizeOption }}"
+                                                onclick="toggleSize('{{ $sizeOption }}', this)"
+                                                class="size-filter-btn py-2 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                            >
+                                                {{ $sizeOption }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @elseif(($currentCategory ?? '') === 'accessories')
+                                <!-- Mode Aksesoris Saja: All Size -->
+                                <div class="mb-2">
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">Tipe Ukuran Peralatan:</span>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        @foreach (['All Size', 'M', 'L'] as $sizeOption)
+                                            @php
+                                                $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
+                                            @endphp
+                                            <button
+                                                type="button"
+                                                data-size="{{ $sizeOption }}"
+                                                onclick="toggleSize('{{ $sizeOption }}', this)"
+                                                class="size-filter-btn py-2 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                            >
+                                                {{ $sizeOption }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Mode Multi-Kategori: Sepatu + Pakaian + All Size -->
+                                <div class="space-y-3">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">👟 Sepatu (EU):</span>
+                                        <div class="grid grid-cols-3 gap-1.5">
+                                            @foreach (['39', '40', '41', '42', '43', '44'] as $sizeOption)
+                                                @php
+                                                    $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
+                                                @endphp
+                                                <button
+                                                    type="button"
+                                                    data-size="{{ $sizeOption }}"
+                                                    onclick="toggleSize('{{ $sizeOption }}', this)"
+                                                    class="size-filter-btn py-1.5 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                                >
+                                                    {{ $sizeOption }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">👕 Pakaian:</span>
+                                        <div class="grid grid-cols-5 gap-1">
+                                            @foreach (['S', 'M', 'L', 'XL', 'XXL'] as $sizeOption)
+                                                @php
+                                                    $isSizeSelected = in_array($sizeOption, (array)$selectedSizes);
+                                                @endphp
+                                                <button
+                                                    type="button"
+                                                    data-size="{{ $sizeOption }}"
+                                                    onclick="toggleSize('{{ $sizeOption }}', this)"
+                                                    class="size-filter-btn py-1.5 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ $isSizeSelected ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                                >
+                                                    {{ $sizeOption }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1.5">🎒 Aksesoris:</span>
+                                        <button
+                                            type="button"
+                                            data-size="All Size"
+                                            onclick="toggleSize('All Size', this)"
+                                            class="size-filter-btn w-full py-1.5 text-xs font-semibold rounded border transition-all text-center cursor-pointer {{ in_array('All Size', (array)$selectedSizes) ? 'border-cyan-500 bg-cyan-50 text-cyan-700 shadow-xs active-size font-bold' : 'border-gray-200 text-gray-700 hover:border-gray-400 bg-white' }}"
+                                        >
+                                            All Size (Universal Fit)
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+
                             <!-- Hidden inputs for size -->
                             <div id="sizeInputsContainer">
                                 @foreach ((array)$selectedSizes as $s)
@@ -255,7 +358,7 @@
                                     $removePriceUrl = url()->current() . (!empty($removePriceQuery) ? '?' . http_build_query($removePriceQuery) : '');
                                 @endphp
                                 <a href="{{ $removePriceUrl }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition" title="Hapus filter harga">
-                                    <span>Price: ${{ request('min_price', 0) }} - ${{ request('max_price', '∞') }}</span>
+                                    <span>Harga: Rp {{ number_format(request('min_price', 0), 0, ',', '.') }} - {{ request('max_price') ? 'Rp ' . number_format(request('max_price'), 0, ',', '.') : '∞' }}</span>
                                     <svg class="w-3 h-3 ml-1.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
@@ -316,9 +419,9 @@
                                             </div>
                                         @endif
 
-                                        <img 
-                                            src="{{ $item['image'] }}" 
-                                            alt="{{ $item['name'] }}" 
+                                        <img
+                                            src="{{ asset($item['image']) }}"
+                                            alt="{{ $item['name'] }}"
                                             class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
                                             loading="lazy"
                                         />
@@ -337,16 +440,12 @@
 
                                         <!-- Price -->
                                         <div class="mt-3 flex items-baseline space-x-2">
+                                            <span class="text-xs sm:text-sm font-extrabold text-cyan-800">
+                                                Rp {{ number_format($item['price'], 0, ',', '.') }}
+                                            </span>
                                             @if (!empty($item['old_price']))
-                                                <span class="text-sm sm:text-base font-extrabold text-[#cf2222]">
-                                                    ${{ number_format($item['price'], 2) }}
-                                                </span>
-                                                <span class="text-xs text-gray-400 line-through">
-                                                    ${{ number_format($item['old_price'], 2) }}
-                                                </span>
-                                            @else
-                                                <span class="text-sm sm:text-base font-extrabold text-gray-900">
-                                                    ${{ number_format($item['price'], 2) }}
+                                                <span class="text-[11px] text-gray-400 line-through">
+                                                    Rp {{ number_format($item['old_price'], 0, ',', '.') }}
                                                 </span>
                                             @endif
                                         </div>

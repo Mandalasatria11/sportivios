@@ -10,7 +10,7 @@
             </nav>
 
             <!-- Page Header Title & Subtitle -->
-            <div class="mb-8 border-b border-gray-200 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div class="mb-6 border-b border-gray-200 pb-5 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                 <div>
                     <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 uppercase font-display">
                         Katalog Produk Sportivios
@@ -24,6 +24,34 @@
                 </div>
             </div>
 
+            <!-- Category Filter Tabs -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-4 mb-6 text-xs font-bold scrollbar-none">
+                <a
+                    href="{{ route('katalog') }}"
+                    class="px-4 py-2 rounded-xl transition whitespace-nowrap {{ empty($category) ? 'bg-cyan-600 text-white shadow-sm' : 'bg-white text-gray-600 hover:text-black border border-gray-200' }}"
+                >
+                    Semua Kategori (All)
+                </a>
+                <a
+                    href="{{ route('katalog', ['category' => 'shoes']) }}"
+                    class="px-4 py-2 rounded-xl transition whitespace-nowrap {{ ($category ?? '') === 'shoes' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-white text-gray-600 hover:text-black border border-gray-200' }}"
+                >
+                    👟 Shoes (Sepatu)
+                </a>
+                <a
+                    href="{{ route('katalog', ['category' => 'apparel']) }}"
+                    class="px-4 py-2 rounded-xl transition whitespace-nowrap {{ ($category ?? '') === 'apparel' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-white text-gray-600 hover:text-black border border-gray-200' }}"
+                >
+                    👕 Apparel (Pakaian)
+                </a>
+                <a
+                    href="{{ route('katalog', ['category' => 'accessories']) }}"
+                    class="px-4 py-2 rounded-xl transition whitespace-nowrap {{ ($category ?? '') === 'accessories' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-white text-gray-600 hover:text-black border border-gray-200' }}"
+                >
+                    🎒 Accessories (Peralatan)
+                </a>
+            </div>
+
             <!-- Product Grid using forelse directive -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 sm:gap-8">
                 @forelse($products as $product)
@@ -31,13 +59,20 @@
                         
                         <!-- Product Image Container -->
                         <a href="{{ route('products.detail', $product->id) }}" class="relative w-full aspect-square bg-[#f8fafc] flex items-center justify-center p-6 overflow-hidden block">
-                            <span class="absolute top-3 left-3 bg-[#0891b2] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
-                                Original
-                            </span>
+                            <div class="absolute top-3 left-3 flex flex-col gap-1 items-start z-10">
+                                <span class="bg-[#0891b2] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+                                    {{ $product->category_label }}
+                                </span>
+                                @if(!empty($product->badge))
+                                    <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider {{ $product->badge_type === 'red' ? 'bg-rose-500 text-white' : 'bg-cyan-400 text-slate-900' }}">
+                                        {{ $product->badge }}
+                                    </span>
+                                @endif
+                            </div>
 
-                            <img 
-                                src="{{ asset($product->image) }}" 
-                                alt="{{ $product->name }}" 
+                            <img
+                                src="{{ asset($product->image) }}"
+                                alt="{{ $product->name }}"
                                 class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
                                 loading="lazy"
                             />
@@ -46,12 +81,15 @@
                         <!-- Product Information Details -->
                         <div class="p-5 flex flex-col flex-grow justify-between bg-white border-t border-gray-50">
                             <div>
+                                <span class="text-[10px] uppercase font-bold text-cyan-700 tracking-wider">
+                                    {{ $product->sub_category ?? $product->category_label }}
+                                </span>
                                 <a href="{{ route('products.detail', $product->id) }}">
                                     <h2 class="text-base font-bold text-gray-900 tracking-tight group-hover:text-cyan-600 transition line-clamp-1">
                                         {{ $product->name }}
                                     </h2>
                                 </a>
-                                
+
                                 <p class="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">
                                     {{ $product->description }}
                                 </p>

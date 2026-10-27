@@ -3,15 +3,49 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
             
             <!-- Top Header & Navigation -->
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-6">
-                <a href="{{ url('/orders') }}" class="inline-flex items-center text-xs font-bold text-gray-700 hover:text-black transition group">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-gray-500 mb-6 gap-3">
+                <a href="{{ route('orders.index') }}" class="inline-flex items-center text-xs font-bold text-gray-700 hover:text-black transition group">
                     <span class="mr-1.5 transform group-hover:-translate-x-1 transition-transform">&larr;</span>
-                    <span>Kembali ke Pesanan Saya</span>
+                    <span>Kembali ke Riwayat Pesanan</span>
                 </a>
-                <div class="font-bold text-gray-900">
-                    Pesanan <span class="text-cyan-700">#{{ $order['order_no'] }}</span>
+
+                <div class="flex items-center space-x-3">
+                    <form action="{{ route('tracking') }}" method="GET" class="flex items-center">
+                        <input
+                            type="text"
+                            name="q"
+                            placeholder="Cek no. resi atau invoice lain..."
+                            class="px-3 py-1.5 text-xs bg-white border border-gray-200 rounded-l-xl focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                        >
+                        <button type="submit" class="px-3 py-1.5 bg-black hover:bg-gray-800 text-white rounded-r-xl text-xs font-bold transition">
+                            Lacak
+                        </button>
+                    </form>
+
+                    <div class="font-bold text-gray-900 hidden md:block">
+                        Pesanan <span class="text-cyan-700">#{{ $order['order_no'] }}</span>
+                    </div>
                 </div>
             </div>
+
+            @if(Auth::check() && Auth::user()->isAdmin())
+                <!-- Admin Notification & Fast Action Bar -->
+                <div class="mb-6 p-4 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-300">
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 font-bold rounded uppercase text-[10px] tracking-wider border border-cyan-500/30">
+                            Mode Administrator
+                        </span>
+                        <span>Anda memiliki akses untuk memodifikasi tahapan perjalanan paket ini secara real-time.</span>
+                    </div>
+                    <a
+                        href="{{ route('admin.orders.show', $transaction->id ?? $order['id']) }}"
+                        class="px-3.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition uppercase tracking-wider flex items-center justify-center space-x-1 flex-shrink-0"
+                    >
+                        <span>Kelola Checkpoint di Admin Panel</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            @endif
 
             <!-- Top Delivery Status Banner Card -->
             <div class="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-8 space-y-6">
@@ -64,7 +98,7 @@
                         <span class="text-gray-400 font-normal">Tahap {{ $order['step_number'] }} dari {{ $order['total_steps'] }}</span>
                     </div>
                     <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-cyan-600 to-teal-500 rounded-full transition-all duration-1000" style="width: 75%;"></div>
+                        <div class="h-full bg-gradient-to-r from-cyan-600 to-teal-500 rounded-full transition-all duration-1000" style="width: {{ ($order['step_number'] / $order['total_steps']) * 100 }}%;"></div>
                     </div>
                 </div>
             </div>
@@ -99,15 +133,28 @@
 
                                 <!-- Event Details -->
                                 <div class="space-y-1">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-xs sm:text-sm font-bold {{ $step['active'] ? 'text-cyan-900' : 'text-gray-800' }}">
-                                            {{ $step['title'] }}
-                                        </h3>
-                                        <span class="text-[11px] font-mono text-gray-400 whitespace-nowrap ml-2">
+                                    <div class="flex flex-wrap items-baseline justify-between gap-1">
+                                        <div class="flex items-center space-x-2">
+                                            <h3 class="text-xs sm:text-sm font-bold {{ $step['active'] ? 'text-cyan-900 font-extrabold' : 'text-gray-800' }}">
+                                                {{ $step['title'] }}
+                                            </h3>
+                                            @if($step['active'])
+                                                <span class="px-2 py-0.5 bg-cyan-100 text-cyan-800 text-[10px] font-black rounded uppercase tracking-wider">
+                                                    Status Terkini
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <span class="text-[11px] font-mono text-gray-400 whitespace-nowrap">
                                             {{ $step['time'] }}
                                         </span>
                                     </div>
-                                    <p class="text-xs text-gray-600 leading-relaxed">
+                                    @if(!empty($step['location']))
+                                        <div class="text-[11px] text-cyan-700 font-medium flex items-center space-x-1">
+                                            <span>📍 Lokasi:</span>
+                                            <span class="font-bold">{{ $step['location'] }}</span>
+                                        </div>
+                                    @endif
+                                    <p class="text-xs text-gray-600 leading-relaxed pt-0.5">
                                         {{ $step['desc'] }}
                                     </p>
                                 </div>

@@ -17,7 +17,7 @@
             </div>
 
             <!-- Center: Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-6 lg:space-x-10">
+            <nav class="hidden md:flex items-center space-x-6 lg:space-x-8">
                 @php
                     $isKatalog = request()->is('katalog*');
                     $isAllProducts = (request()->is('product') && !request()->is('product/*') && !request('category') && !request('categories'));
@@ -25,9 +25,12 @@
                     $isApparel = request()->is('product/apparel*') || request('category') === 'apparel' || in_array('apparel', (array)request('categories', []));
                     $isAccessories = request()->is('product/accessories*') || request()->is('product/accecoris*') || request('category') === 'accessories' || in_array('accessories', (array)request('categories', []));
                 @endphp
-                
+
                 <a href="{{ url('/product') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isAllProducts ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     All Products
+                </a>
+                <a href="{{ url('/katalog') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isKatalog ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
+                    Katalog
                 </a>
                 <a href="{{ url('/product/shoes') }}" class="text-xs sm:text-sm font-semibold transition pb-1 border-b-2 {{ $isShoes ? 'text-cyan-600 border-cyan-500 font-bold' : 'text-gray-700 hover:text-black border-transparent' }}">
                     Shoes
@@ -42,10 +45,10 @@
 
             <!-- Right: Icons (Search, User Auth, Cart) & Mobile Hamburger -->
             <div class="flex items-center space-x-3 sm:space-x-4 text-gray-900">
-                
+
                 <!-- Search Button -->
-                <button 
-                    type="button" 
+                <button
+                    type="button"
                     onclick="toggleSearchModal()"
                     class="p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
                     aria-label="Search"
@@ -55,112 +58,184 @@
                     </svg>
                 </button>
 
-                    <!-- User Account / Login & Register Button -->
-                    <div class="relative" x-data="{ userMenuOpen: false }">
-                        <button 
-                            type="button" 
-                            @click="userMenuOpen = !userMenuOpen" 
-                            class="flex items-center space-x-1.5 p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
-                            id="userAuthBtn"
-                            aria-label="User Account"
-                        >
-                            <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                            </svg>
-                            <span id="navUserBadge" class="hidden text-xs font-semibold text-gray-900 max-w-[90px] truncate sm:inline-block">Peter P.</span>
-                        </button>
-
-                        <!-- Dropdown Menu -->
-                        <div 
-                            x-show="userMenuOpen" 
-                            @click.away="userMenuOpen = false" 
-                            x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform opacity-0 scale-95"
-                            x-transition:enter-end="transform opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-75"
-                            x-transition:leave-start="transform opacity-100 scale-100"
-                            x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 text-left divide-y divide-gray-100"
-                            style="display: none;"
-                        >
-                            <div class="px-4 py-2.5">
-                                <p class="text-xs font-bold text-gray-900">Peter Parker</p>
-                                <p class="text-[11px] text-gray-500 truncate">parker@gmail.com</p>
-                            </div>
-                            <div class="py-1">
-                                <a href="{{ url('/profile') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
-                                    <span class="mr-2.5">👤</span> Profile Settings
-                                </a>
-                                <a href="{{ url('/orders') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
-                                    <span class="mr-2.5">📦</span> My Orders &amp; Tracking
-                                </a>
-                            </div>
-                            <div class="py-1">
-                                <a href="{{ url('/login') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
-                                    <span class="mr-2.5">🔑</span> Login Page
-                                </a>
-                                <a href="{{ url('/register') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
-                                    <span class="mr-2.5">📝</span> Join the Team (Register)
-                                </a>
-                                <button type="button" @click="userMenuOpen = false; toggleAuthModal()" class="w-full text-left flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
-                                    <span class="mr-2.5">⚡</span> Quick Demo Modal
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Shopping Cart Icon with Dummy Badge -->
-                    <a href="{{ url('/cart') }}" class="relative p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100" aria-label="Cart">
-                        <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.404-6.326A1.125 1.125 0 0019.25 6.75H5.106M7.5 14.25L5.106 6.75m0 0L4.1 3M9 20.25a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm10.5 0a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0z" />
-                        </svg>
-                        <span class="absolute top-0.5 right-0.5 w-4 h-4 bg-cyan-500 text-slate-950 font-black text-[9px] flex items-center justify-center rounded-full">2</span>
-                    </a>
-
-                    <!-- Mobile Menu Button -->
-                    <button 
-                        type="button" 
-                        onclick="toggleMobileMenu()" 
-                        class="md:hidden p-1.5 text-gray-700 hover:text-black rounded-lg hover:bg-gray-100"
-                        aria-label="Toggle Navigation"
+                <!-- User Account Dropdown -->
+                <div class="relative" x-data="{ userMenuOpen: false }">
+                    <button
+                        type="button"
+                        @click="userMenuOpen = !userMenuOpen"
+                        class="flex items-center space-x-1.5 p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100"
+                        id="userAuthBtn"
+                        aria-label="User Account"
                     >
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+                        <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                         </svg>
+                        @auth
+                            <span class="hidden text-xs font-semibold text-gray-900 max-w-[100px] truncate sm:inline-block">
+                                {{ explode(' ', Auth::user()->name)[0] }}
+                            </span>
+                            @if(Auth::user()->isAdmin())
+                                <span class="hidden sm:inline-block text-[9px] bg-slate-900 text-cyan-400 font-bold px-1.5 py-0.5 rounded uppercase">ADMIN</span>
+                            @endif
+                        @else
+                            <span class="hidden text-xs font-medium text-gray-600 sm:inline-block">Masuk</span>
+                        @endauth
                     </button>
 
-                </div>
-            </div>
+                    <!-- Dropdown Menu -->
+                    <div
+                        x-show="userMenuOpen"
+                        @click.away="userMenuOpen = false"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 text-left divide-y divide-gray-100"
+                        style="display: none;"
+                    >
+                        @auth
+                            <div class="px-4 py-2.5">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase {{ Auth::user()->isAdmin() ? 'bg-slate-900 text-cyan-400' : 'bg-emerald-100 text-emerald-800' }}">
+                                        {{ Auth::user()->role }}
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-gray-500 truncate mt-0.5">{{ Auth::user()->email }}</p>
+                            </div>
 
-            <!-- Mobile Drawer Navigation -->
-            <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-3 space-y-1">
-                <a href="{{ url('/product') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAllProducts ? 'bg-cyan-50 text-cyan-800 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
-                    All Products
+                            @if(Auth::user()->isAdmin())
+                                <div class="py-1 bg-slate-50">
+                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-xs font-bold text-slate-900 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                        <span class="mr-2">⚡</span> Dashboard Admin
+                                    </a>
+                                    <a href="{{ route('admin.products.index') }}" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                        <span class="mr-2">👟</span> Kelola Produk
+                                    </a>
+                                    <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-2 text-xs font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                        <span class="mr-2">📦</span> Kelola Pesanan & Resi
+                                    </a>
+                                </div>
+                            @endif
+
+                            <div class="py-1">
+                                <a href="{{ route('profile') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                    <span class="mr-2.5">👤</span> Profile Settings
+                                </a>
+                                <a href="{{ route('orders') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                    <span class="mr-2.5">📦</span> Pesanan Saya & Lacak Resi
+                                </a>
+                            </div>
+
+                            <div class="py-1">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left flex items-center px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition">
+                                        <span class="mr-2.5">🚪</span> Logout (Keluar)
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <div class="px-4 py-2">
+                                <p class="text-xs font-bold text-gray-900">Selamat Datang di Sportivios</p>
+                                <p class="text-[11px] text-gray-500">Silakan login atau daftar akun baru.</p>
+                            </div>
+                            <div class="py-1">
+                                <a href="{{ route('login') }}" class="flex items-center px-4 py-2 text-xs font-bold text-cyan-700 hover:bg-cyan-50 transition">
+                                    <span class="mr-2.5">🔑</span> Masuk (Login)
+                                </a>
+                                <a href="{{ route('register') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                    <span class="mr-2.5">📝</span> Daftar Akun (Register)
+                                </a>
+                                <a href="{{ route('orders') }}" class="flex items-center px-4 py-2 text-xs font-medium text-gray-700 hover:bg-cyan-50 hover:text-cyan-800 transition">
+                                    <span class="mr-2.5">🚚</span> Lacak Pesanan
+                                </a>
+                            </div>
+                        @endauth
+                    </div>
+                </div>
+
+                <!-- Shopping Cart Icon with Real Count -->
+                @php
+                    $cartCount = count(session('cart', []));
+                @endphp
+                <a href="{{ route('cart') }}" class="relative p-1.5 text-gray-700 hover:text-cyan-600 transition rounded-full hover:bg-gray-100" aria-label="Cart">
+                    <svg class="w-5 h-5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.7 2.404-6.326A1.125 1.125 0 0019.25 6.75H5.106M7.5 14.25L5.106 6.75m0 0L4.1 3M9 20.25a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm10.5 0a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0z" />
+                    </svg>
+                    @if($cartCount > 0)
+                        <span class="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-cyan-500 text-slate-950 font-black text-[9px] flex items-center justify-center rounded-full">
+                            {{ $cartCount }}
+                        </span>
+                    @endif
                 </a>
-                <a href="{{ url('/product/shoes') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isShoes ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
-                    Shoes
-                </a>
-                <a href="{{ url('/product/apparel') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isApparel ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
-                    Apparel
-                </a>
-                <a href="{{ url('/product/accessories') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAccessories ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
-                    Accessories
-                </a>
-                <div class="pt-2 border-t border-gray-100 mt-2 space-y-1">
-                    <a href="{{ url('/profile') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
-                        👤 Profile Settings (Peter Parker)
+
+                <!-- Mobile Menu Button -->
+                <button
+                    type="button"
+                    onclick="toggleMobileMenu()"
+                    class="md:hidden p-1.5 text-gray-700 hover:text-black rounded-lg hover:bg-gray-100"
+                    aria-label="Toggle Navigation"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+                    </svg>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-3 space-y-1">
+            <a href="{{ url('/product') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAllProducts ? 'bg-cyan-50 text-cyan-800 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
+                All Products
+            </a>
+            <a href="{{ url('/katalog') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isKatalog ? 'bg-cyan-50 text-cyan-800 font-bold' : 'text-gray-700 hover:bg-gray-50' }}">
+                Katalog
+            </a>
+            <a href="{{ url('/product/shoes') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isShoes ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
+                Shoes
+            </a>
+            <a href="{{ url('/product/apparel') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isApparel ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
+                Apparel
+            </a>
+            <a href="{{ url('/product/accessories') }}" class="block px-3 py-2 text-sm font-semibold rounded-md {{ $isAccessories ? 'bg-cyan-50 text-cyan-800' : 'text-gray-700 hover:bg-gray-50' }}">
+                Accessories
+            </a>
+            <div class="pt-2 border-t border-gray-100 mt-2 space-y-1">
+                @auth
+                    @if(Auth::user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-1.5 text-xs font-bold text-cyan-700 bg-cyan-50 rounded">
+                            ⚡ Dashboard Admin
+                        </a>
+                    @endif
+                    <a href="{{ route('profile') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                        👤 Profile ({{ Auth::user()->name }})
                     </a>
-                    <a href="{{ url('/orders') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
-                        📦 My Orders &amp; Delivery Tracking
+                    <a href="{{ route('orders') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                        📦 Pesanan Saya & Resi
                     </a>
-                    <a href="{{ url('/login') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded">
+                            🚪 Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="block px-3 py-1.5 text-xs font-bold text-cyan-700 hover:bg-gray-50 rounded">
                         🔑 Login
                     </a>
-                    <a href="{{ url('/register') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:text-cyan-700">
+                    <a href="{{ route('register') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:bg-gray-50 rounded">
                         📝 Join the Team (Register)
                     </a>
-                </div>
+                    <a href="{{ route('orders') }}" class="block px-3 py-1.5 text-xs font-bold text-gray-800 hover:bg-gray-50 rounded">
+                        🚚 Lacak Pesanan
+                    </a>
+                @endauth
             </div>
+        </div>
 
         </div>
 

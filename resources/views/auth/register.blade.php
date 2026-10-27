@@ -17,74 +17,92 @@
                     <h1 class="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-display">
                         Join the Team
                     </h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1 mb-6">
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1 mb-5">
                         Start your performance journey with SPORTIVIOS.
                     </p>
 
+                    <!-- Error Alerts -->
+                    @if ($errors->any())
+                        <div class="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <!-- Register Form -->
-                    <form action="{{ url('/profile') }}" method="GET" class="space-y-4">
+                    <form action="{{ route('register.post') }}" method="POST" class="space-y-4">
+                        @csrf
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">
-                                FULL NAME
+                                FULL NAME <span class="text-rose-500">*</span>
                             </label>
-                            <input 
-                                type="text" 
-                                placeholder="e.g. Alex Runner" 
+                            <input
+                                type="text"
+                                name="name"
+                                value="{{ old('name') }}"
+                                placeholder="e.g. Alex Runner"
                                 required
-                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0F172A] focus:border-[#0F172A] transition"
+                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
                             >
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">
-                                EMAIL ADDRESS
+                                EMAIL ADDRESS <span class="text-rose-500">*</span>
                             </label>
-                            <input 
-                                type="email" 
-                                placeholder="alex@example.com" 
+                            <input
+                                type="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                placeholder="alex@example.com"
                                 required
-                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0F172A] focus:border-[#0F172A] transition"
+                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
                             >
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">
-                                PASSWORD
+                                PASSWORD <span class="text-rose-500">*</span>
                             </label>
-                            <input 
-                                type="password" 
-                                placeholder="••••••••" 
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="•••••••• (min. 6 karakter)"
                                 required
-                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0F172A] focus:border-[#0F172A] transition"
+                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
                             >
                         </div>
 
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">
-                                CONFIRM PASSWORD
+                                CONFIRM PASSWORD <span class="text-rose-500">*</span>
                             </label>
-                            <input 
-                                type="password" 
-                                placeholder="••••••••" 
+                            <input
+                                type="password"
+                                name="password_confirmation"
+                                placeholder="••••••••"
                                 required
-                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#0F172A] focus:border-[#0F172A] transition"
+                                class="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
                             >
                         </div>
 
                         <div class="flex items-center pt-1">
-                            <input 
-                                type="checkbox" 
-                                id="terms" 
-                                required 
-                                class="w-4 h-4 rounded border-gray-300 text-[#0F172A] focus:ring-[#0F172A] accent-[#0F172A]"
+                            <input
+                                type="checkbox"
+                                name="terms"
+                                id="terms"
+                                value="1"
+                                required
+                                class="w-4 h-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 accent-cyan-600"
                             >
                             <label for="terms" class="ml-2 text-xs text-gray-600 cursor-pointer">
                                 I agree to the <a href="#" class="underline text-gray-900 font-semibold hover:text-cyan-600">Terms and Conditions</a>.
                             </label>
                         </div>
 
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             class="w-full py-3.5 bg-[#0F172A] hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest rounded-lg transition shadow-md active:scale-98"
                         >
                             REGISTER

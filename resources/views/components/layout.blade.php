@@ -38,6 +38,9 @@
         </script>
     @endif
 
+    <!-- Alpine.js for interactive dropdowns, mobile menu, modals, and tabs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
