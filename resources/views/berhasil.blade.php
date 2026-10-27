@@ -132,9 +132,16 @@
                                                     <span class="font-bold text-gray-900 block">
                                                         {{ $transaction->product->name ?? 'Produk Sportivios #' . $transaction->product_id }}
                                                     </span>
-                                                    <span class="text-[11px] text-gray-400">
-                                                        ID Produk: #{{ $transaction->product_id }}
-                                                    </span>
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        <span class="text-[11px] text-gray-400">
+                                                            ID: #{{ $transaction->product_id }}
+                                                        </span>
+                                                        @if(!empty($transaction->size))
+                                                            <span class="text-[10px] font-semibold bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded border border-gray-200">
+                                                                Ukuran: {{ $transaction->size }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -193,9 +200,17 @@
                     </button>
 
                     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                        <a 
-                            href="{{ route('katalog') }}" 
-                            class="px-6 py-3 bg-gray-900 hover:bg-cyan-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-2"
+                        <a
+                            href="{{ route('orders.tracking', $transaction->invoice_code) }}"
+                            class="px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-1.5"
+                        >
+                            <span>🚚</span>
+                            <span>Lacak Status Pesanan</span>
+                        </a>
+
+                        <a
+                            href="{{ route('katalog') }}"
+                            class="px-5 py-3 bg-gray-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-2"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>

@@ -33,8 +33,8 @@
 
                 <!-- CTA Button -->
                 <div class="mt-4 sm:mt-5">
-                    <a 
-                        href="#claim" 
+                    <a
+                        href="{{ route('products.index', ['category' => 'shoes']) }}"
                         class="inline-flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 rounded-md text-xs font-bold tracking-wide bg-[#8ee0ec] text-slate-900 shadow-md hover:bg-[#74d7e6] hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                     >
                         Claim Offer

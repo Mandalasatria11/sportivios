@@ -34,79 +34,87 @@
                 <div class="flex items-center space-x-3 self-start md:self-auto">
                     <div class="bg-white border border-gray-200 px-4 py-2.5 rounded-xl shadow-xs text-center min-w-[100px]">
                         <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">AKTIF DIKIRIM</div>
-                        <div class="text-lg font-black text-cyan-700">2 <span class="text-xs font-normal text-gray-500">Paket</span></div>
+                        <div class="text-lg font-black text-cyan-700">{{ ($counts['perjalanan'] ?? 0) + ($counts['proses'] ?? 0) }} <span class="text-xs font-normal text-gray-500">Paket</span></div>
                     </div>
                     <div class="bg-white border border-gray-200 px-4 py-2.5 rounded-xl shadow-xs text-center min-w-[100px]">
-                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">TIBA BULAN INI</div>
-                        <div class="text-lg font-black text-gray-900">1 <span class="text-xs font-normal text-gray-500">Paket</span></div>
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">TIBA / SELESAI</div>
+                        <div class="text-lg font-black text-gray-900">{{ $counts['terkirim'] ?? 0 }} <span class="text-xs font-normal text-gray-500">Paket</span></div>
                     </div>
                 </div>
             </div>
 
             <!-- Filter Tabs & Search Bar -->
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-6" x-data="{ activeTab: 'semua' }">
-                
-                <!-- Filter Pills -->
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-6">
+
+                <!-- Filter Pills as Functional Links -->
+                @php $currentStatus = request('status'); @endphp
                 <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <button 
-                        @click="activeTab = 'semua'"
-                        :class="activeTab === 'semua' ? 'bg-black text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-black'"
-                        class="px-4 py-2 rounded-xl transition"
+                    <a
+                        href="{{ route('orders.index', request()->only('q')) }}"
+                        class="px-4 py-2 rounded-xl transition {{ empty($currentStatus) ? 'bg-black text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-black' }}"
                     >
-                        Semua <span class="ml-1 text-[10px] opacity-80">3</span>
-                    </button>
+                        Semua <span class="ml-1 text-[10px] opacity-80">{{ $counts['semua'] ?? 0 }}</span>
+                    </a>
 
-                    <button 
-                        @click="activeTab = 'perjalanan'"
-                        :class="activeTab === 'perjalanan' ? 'bg-cyan-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-cyan-600'"
-                        class="px-4 py-2 rounded-xl transition"
+                    <a
+                        href="{{ route('orders.index', array_merge(request()->only('q'), ['status' => 'perjalanan'])) }}"
+                        class="px-4 py-2 rounded-xl transition {{ $currentStatus === 'perjalanan' ? 'bg-cyan-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-cyan-600' }}"
                     >
-                        Dalam Perjalanan <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800">1</span>
-                    </button>
+                        Dalam Perjalanan <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800">{{ $counts['perjalanan'] ?? 0 }}</span>
+                    </a>
 
-                    <button 
-                        @click="activeTab = 'proses'"
-                        :class="activeTab === 'proses' ? 'bg-amber-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-600'"
-                        class="px-4 py-2 rounded-xl transition"
+                    <a
+                        href="{{ route('orders.index', array_merge(request()->only('q'), ['status' => 'proses'])) }}"
+                        class="px-4 py-2 rounded-xl transition {{ $currentStatus === 'proses' ? 'bg-amber-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-600' }}"
                     >
-                        Sedang Diproses <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">1</span>
-                    </button>
+                        Sedang Diproses <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">{{ $counts['proses'] ?? 0 }}</span>
+                    </a>
 
-                    <button 
-                        @click="activeTab = 'terkirim'"
-                        :class="activeTab === 'terkirim' ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-emerald-600'"
-                        class="px-4 py-2 rounded-xl transition"
+                    <a
+                        href="{{ route('orders.index', array_merge(request()->only('q'), ['status' => 'terkirim'])) }}"
+                        class="px-4 py-2 rounded-xl transition {{ in_array($currentStatus, ['terkirim', 'selesai']) ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'bg-white text-gray-700 border border-gray-200 hover:border-emerald-600' }}"
                     >
-                        Terkirim <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">1</span>
-                    </button>
+                        Terkirim <span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">{{ $counts['terkirim'] ?? 0 }}</span>
+                    </a>
 
-                    <button 
-                        @click="activeTab = 'dibatalkan'"
-                        :class="activeTab === 'dibatalkan' ? 'bg-gray-800 text-white font-bold' : 'bg-white text-gray-700 border border-gray-200'"
-                        class="px-4 py-2 rounded-xl transition"
+                    <a
+                        href="{{ route('orders.index', array_merge(request()->only('q'), ['status' => 'dibatalkan'])) }}"
+                        class="px-4 py-2 rounded-xl transition {{ $currentStatus === 'dibatalkan' ? 'bg-gray-800 text-white font-bold' : 'bg-white text-gray-700 border border-gray-200' }}"
                     >
-                        Dibatalkan <span class="ml-1 text-[10px] opacity-60">0</span>
-                    </button>
+                        Dibatalkan <span class="ml-1 text-[10px] opacity-60">{{ $counts['dibatalkan'] ?? 0 }}</span>
+                    </a>
                 </div>
 
-                <!-- Search Input Right -->
-                <div class="relative w-full lg:w-72">
-                    <input 
-                        type="text" 
-                        placeholder="Cari no. resi, order, atau produk..."
+                <!-- Search Input Right Form -->
+                <form action="{{ route('orders.index') }}" method="GET" class="relative w-full lg:w-72">
+                    @if(request('status'))
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ request('q') }}"
+                        placeholder="Cari no. resi, invoice, atau produk..."
                         class="w-full pl-9 pr-8 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-cyan-500 shadow-xs"
                     >
-                    <svg class="w-4 h-4 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
+                    <button type="submit" class="absolute left-3 top-2.5 text-gray-400 hover:text-black">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                    @if(request('q'))
+                        <a href="{{ route('orders.index', request()->only('status')) }}" class="absolute right-2.5 top-2 text-xs text-gray-400 hover:text-red-500 font-bold" title="Hapus pencarian">
+                            &times;
+                        </a>
+                    @endif
+                </form>
 
             </div>
 
             <!-- Orders Cards List -->
             <div class="space-y-6">
                 
-                @foreach ($orders as $oIndex => $ord)
+                @forelse ($orders as $oIndex => $ord)
                     <div class="bg-white rounded-2xl border border-gray-200/80 shadow-[0_2px_14px_rgba(0,0,0,0.03)] overflow-hidden">
                         
                         <!-- Order Top Header Info Bar -->
@@ -187,19 +195,25 @@
                                 🛡️ Sportivios Guaranteed Safe Delivery Transit
                             </div>
 
-                            <div class="flex items-center space-x-2 self-end sm:self-auto">
-                                @if ($ord['status'] === 'Selesai / Terkirim')
-                                    <button onclick="alert('Terima kasih atas ulasan Anda!')" class="px-4 py-2 border border-gray-300 hover:border-black text-gray-800 font-bold rounded-lg transition shadow-2xs">
+                            <div class="flex flex-wrap items-center gap-2 self-end sm:self-auto">
+                                @if(Auth::check() && Auth::user()->isAdmin())
+                                    <a href="{{ route('admin.orders.show', $ord['id']) }}" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-cyan-400 font-bold rounded-lg transition text-xs border border-slate-700">
+                                        ⚙️ Kelola Admin
+                                    </a>
+                                @endif
+
+                                @if ($ord['raw_status'] === 'selesai')
+                                    <button onclick="alert('Terima kasih atas ulasan bintang 5 Anda!')" class="px-4 py-2 border border-gray-300 hover:border-black text-gray-800 font-bold rounded-lg transition shadow-2xs">
                                         Beri Ulasan
                                     </button>
-                                    <a href="{{ url('/product/detail/1') }}" class="px-4 py-2 bg-black hover:bg-gray-800 text-white font-bold rounded-lg transition shadow-xs">
-                                        Beli Lagi
+                                    <a href="{{ route('orders.tracking', $ord['order_no']) }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-lg transition text-xs">
+                                        Rincian Pengiriman
                                     </a>
                                 @else
-                                    <a href="{{ url('/orders/' . $ord['order_no']) }}" class="px-4 py-2 border border-gray-300 hover:border-black text-gray-800 font-bold rounded-lg transition shadow-2xs">
+                                    <a href="{{ route('orders.tracking', $ord['order_no']) }}" class="px-4 py-2 border border-gray-300 hover:border-black text-gray-800 font-bold rounded-lg transition shadow-2xs">
                                         Detail Pesanan
                                     </a>
-                                    <a href="{{ url('/orders/' . $ord['order_no']) }}" class="px-4 py-2 bg-black hover:bg-gray-800 text-white font-bold rounded-lg transition shadow-xs flex items-center space-x-1">
+                                    <a href="{{ route('orders.tracking', $ord['order_no']) }}" class="px-4 py-2 bg-black hover:bg-gray-800 text-white font-bold rounded-lg transition shadow-xs flex items-center space-x-1">
                                         <span>Lacak Pengiriman</span>
                                         <span>&rarr;</span>
                                     </a>
@@ -208,7 +222,24 @@
                         </div>
 
                     </div>
-                @endforeach
+                @empty
+                    <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200 p-8 shadow-xs">
+                        <div class="w-16 h-16 bg-cyan-50 text-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-bold text-gray-900">Belum Ada Riwayat Pengiriman</h3>
+                        <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+                            Pesanan yang Anda buat akan langsung muncul di sini beserta nomor resi pengiriman real-time.
+                        </p>
+                        <div class="mt-6">
+                            <a href="{{ route('katalog') }}" class="inline-flex items-center px-5 py-2.5 bg-black hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                                Mulai Belanja di Katalog
+                            </a>
+                        </div>
+                    </div>
+                @endforelse
 
             </div>
 

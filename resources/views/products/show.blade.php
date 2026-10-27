@@ -66,10 +66,10 @@
                             </div>
                         @endif
 
-                        <img 
-                            id="mainProductImage" 
-                            src="{{ $product['image'] ?? asset('images/products/shoe.jpg') }}" 
-                            alt="{{ $product['name'] ?? 'AeroGlide Pro X' }}" 
+                        <img
+                            id="mainProductImage"
+                            src="{{ asset($product['image'] ?? 'images/products/shoe.jpg') }}"
+                            alt="{{ $product['name'] ?? 'AeroGlide Pro X' }}"
                             class="w-full max-h-[380px] sm:max-h-[420px] object-contain transform transition-all duration-300"
                         >
                     </div>
@@ -78,21 +78,21 @@
 
                 <!-- Right: Product Info & Purchase Options (5 cols on lg) -->
                 <div class="lg:col-span-5 flex flex-col space-y-6">
-                    
+
                     <!-- Title & Price & Reviews -->
                     <div>
                         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 font-display">
                             {{ $product['name'] ?? 'AeroGlide Pro X' }}
                         </h1>
-                        
+
                         <div class="mt-3 flex items-center justify-between">
                             <div class="flex items-baseline space-x-2">
                                 <span class="text-2xl sm:text-3xl font-extrabold text-gray-900">
-                                    ${{ number_format($product['price'] ?? 129.99, 2) }}
+                                    Rp {{ number_format($product['price'] ?? 1899000, 0, ',', '.') }}
                                 </span>
                                 @if (!empty($product['old_price']))
                                     <span class="text-base text-gray-400 line-through font-medium">
-                                        ${{ number_format($product['old_price'], 2) }}
+                                        Rp {{ number_format($product['old_price'], 0, ',', '.') }}
                                     </span>
                                 @endif
                             </div>
@@ -162,49 +162,68 @@
                         </div>
                     </div>
 
-                    <!-- Size Selector Matching Screenshot (Row 1: 5 items, Row 2: 4 items with 11.5 disabled) -->
+                    @php
+                        $category = strtolower($product['category'] ?? ($product->category ?? 'shoes'));
+                        $availableSizes = $product->available_sizes ?? ['39', '40', '41', '42', '43', '44'];
+                        $defaultSize = $product->default_size ?? ($availableSizes[0] ?? 'All Size');
+                        $hasMultipleSizes = method_exists($product, 'hasMultipleSizes') ? $product->hasMultipleSizes() : ($category !== 'accessories');
+                    @endphp
+
+                    <!-- Dynamic Size Selector by Category -->
                     <div>
                         <div class="flex justify-between items-center text-xs font-bold text-gray-900 mb-2">
-                            <span>Size (US Men's)</span>
-                            <a href="#" onclick="alert('Size Guide: Standard athletic fit. We recommend ordering your true size.')" class="text-gray-400 hover:text-black underline font-normal text-[11px]">
-                                Size Guide
-                            </a>
+                            <span>{{ $product->size_title ?? 'Pilihan Ukuran' }}</span>
+                            @if ($hasMultipleSizes)
+                                <a href="#" onclick="alert('Panduan Ukuran Sportivios:\n• Sepatu (Shoes): Gunakan nomor EU standar (39-44).\n• Pakaian (Apparel): S (Dada 88-96cm), M (96-104cm), L (104-112cm), XL (112-124cm).\n• Aksesoris: Ukuran universal / All Size.')" class="text-cyan-700 hover:text-black underline font-normal text-[11px]">
+                                    Panduan Ukuran
+                                </a>
+                            @endif
                         </div>
-                        <div class="grid grid-cols-5 gap-2">
-                            <!-- 8 -->
-                            <button type="button" onclick="selectSize('8', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">8</button>
-                            <!-- 8.5 -->
-                            <button type="button" onclick="selectSize('8.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">8.5</button>
-                            <!-- 9 -->
-                            <button type="button" onclick="selectSize('9', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">9</button>
-                            <!-- 9.5 (Selected by default) -->
-                            <button type="button" onclick="selectSize('9.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-black bg-black text-white shadow-xs">9.5</button>
-                            <!-- 10 -->
-                            <button type="button" onclick="selectSize('10', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">10</button>
-                            <!-- 10.5 -->
-                            <button type="button" onclick="selectSize('10.5', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">10.5</button>
-                            <!-- 11 -->
-                            <button type="button" onclick="selectSize('11', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">11</button>
-                            <!-- 11.5 (Disabled & Crossed Out) -->
-                            <button type="button" disabled class="py-2.5 rounded-lg border text-xs font-medium text-gray-300 border-gray-100 bg-gray-50/70 cursor-not-allowed line-through">11.5</button>
-                            <!-- 12 -->
-                            <button type="button" onclick="selectSize('12', this)" class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white">12</button>
-                        </div>
-                        
-                        <!-- Low Stock Indicator (Red with Warning Icon) -->
-                        <div class="mt-2.5 text-[11px] font-semibold text-[#dc2626] flex items-center space-x-1.5">
-                            <svg class="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <span>Only 2 left in Size <span id="activeSizeLabel">9.5</span></span>
+
+                        @if ($hasMultipleSizes)
+                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                                @foreach ($availableSizes as $idx => $sizeOption)
+                                    @php $isSelected = ($sizeOption == $defaultSize); @endphp
+                                    <button
+                                        type="button"
+                                        onclick="selectSize('{{ $sizeOption }}', this)"
+                                        class="py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn {{ $isSelected ? 'border-black bg-black text-white shadow-xs' : 'border-gray-200 text-gray-800 hover:border-black bg-white' }}"
+                                    >
+                                        {{ $sizeOption }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        @else
+                            <!-- Non-Wearable / All Size Badge for Accessories (Flask, Bag, Gloves, Ball, etc) -->
+                            <div class="p-3.5 bg-slate-50 border border-gray-200 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                                    <span class="text-xs font-bold text-gray-900">All Size / Universal Fit</span>
+                                    <span class="text-[11px] text-gray-500">(Non-Ukuran / Produk Universal)</span>
+                                </div>
+                                <span class="px-2.5 py-1 bg-cyan-100 text-cyan-800 font-extrabold rounded-md text-[10px] uppercase">
+                                    Standard
+                                </span>
+                            </div>
+                        @endif
+
+                        <!-- Stock & Selected Size Info -->
+                        <div class="mt-2.5 text-[11px] font-semibold text-gray-600 flex items-center space-x-1.5">
+                            <span class="text-emerald-500 font-bold">●</span>
+                            <span>Stok: <strong class="text-gray-900">{{ $product['stock'] ?? 15 }} unit</strong></span>
+                            @if ($hasMultipleSizes)
+                                <span class="text-gray-400">• Ukuran terpilih: <strong id="activeSizeLabel" class="text-cyan-700">{{ $defaultSize }}</strong></span>
+                            @endif
                         </div>
                     </div>
 
                     <!-- CTA Buttons (Add to Cart, Checkout, Wishlist) -->
                     <div class="space-y-3 pt-2">
-                        <!-- Direct Checkout Button -->
-                        <a 
-                            href="{{ url('/checkout/' . ($product['id'] ?? 1)) }}"
+                        <!-- Direct Checkout Button with Selected Size -->
+                        <a
+                            id="directCheckoutBtn"
+                            data-base-url="{{ url('/checkout/' . ($product['id'] ?? 1)) }}"
+                            href="{{ url('/checkout/' . ($product['id'] ?? 1)) }}?size={{ urlencode($defaultSize) }}"
                             class="w-full py-3.5 bg-gray-900 hover:bg-cyan-600 active:bg-cyan-700 text-white font-black uppercase text-xs sm:text-sm rounded-lg tracking-wider transition-all shadow-md flex items-center justify-center space-x-2 text-center"
                         >
                             <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -213,16 +232,23 @@
                             <span>BELI SEKARANG (CHECKOUT)</span>
                         </a>
 
-                        <button 
-                            type="button" 
-                            onclick="addToCartAnimation()"
-                            class="w-full py-3.5 bg-[#8ee0ec] hover:bg-[#78d6e3] text-slate-950 font-black uppercase text-xs sm:text-sm rounded-lg tracking-widest transition-all shadow-[0_4px_14px_rgba(142,224,236,0.5)] transform active:scale-98 flex items-center justify-center space-x-2"
-                        >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                            </svg>
-                            <span id="addToCartText">ADD TO CART</span>
-                        </button>
+                        <!-- Real Add to Cart Form -->
+                        <form action="{{ route('cart.add') }}" method="POST" id="addToCartForm">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product['id'] ?? 1 }}">
+                            <input type="hidden" name="size" id="selectedSizeInput" value="{{ $defaultSize }}">
+                            <input type="hidden" name="color" id="selectedColorInput" value="Default">
+                            <input type="hidden" name="quantity" value="1">
+                            <button
+                                type="submit"
+                                class="w-full py-3.5 bg-[#8ee0ec] hover:bg-[#78d6e3] text-slate-950 font-black uppercase text-xs sm:text-sm rounded-lg tracking-widest transition-all shadow-[0_4px_14px_rgba(142,224,236,0.5)] transform active:scale-98 flex items-center justify-center space-x-2"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
+                                <span id="addToCartText">ADD TO CART</span>
+                            </button>
+                        </form>
 
                         <button 
                             type="button" 
@@ -312,6 +338,8 @@
 
         function selectColor(name, el) {
             document.getElementById('selectedColorName').textContent = name;
+            const input = document.getElementById('selectedColorInput');
+            if (input) input.value = name;
             document.querySelectorAll('.color-btn').forEach(btn => {
                 btn.classList.remove('border-black');
                 btn.classList.add('border-transparent');
@@ -329,7 +357,17 @@
                 btn.className = 'py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-gray-200 text-gray-800 hover:border-black bg-white';
             });
             el.className = 'py-2.5 rounded-lg border text-xs font-bold transition text-center size-btn border-black bg-black text-white shadow-xs';
-            document.getElementById('activeSizeLabel').textContent = size;
+            const label = document.getElementById('activeSizeLabel');
+            if (label) label.textContent = size;
+            const input = document.getElementById('selectedSizeInput');
+            if (input) input.value = size;
+
+            // Update URL tombol checkout langsung
+            const directBtn = document.getElementById('directCheckoutBtn');
+            if (directBtn) {
+                const baseUrl = directBtn.getAttribute('data-base-url') || directBtn.href.split('?')[0];
+                directBtn.href = `${baseUrl}?size=${encodeURIComponent(size)}`;
+            }
         }
 
         function toggleAccordion(id) {
