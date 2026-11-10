@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -77,18 +78,24 @@ class ProductController extends Controller
             $sizes = 'All Size';
         }
 
-        Product::create([
+        $productData = [
             'name' => $validated['name'],
             'category' => $validated['category'],
             'sub_category' => $validated['sub_category'] ?? ucfirst($validated['category']),
             'description' => $validated['description'],
             'price' => $validated['price'],
             'stock' => $validated['stock'],
-            'sizes' => $sizes,
             'badge' => $validated['badge'] ?? null,
             'badge_type' => $validated['badge_type'] ?? 'cyan',
             'image' => $imagePath,
-        ]);
+        ];
+
+        // Pastikan kolom sizes hanya disimpan jika tabel products memilikinya
+        if (Schema::hasColumn('products', 'sizes')) {
+            $productData['sizes'] = $sizes;
+        }
+
+        Product::create($productData);
 
         return redirect()->route('admin.products.index')->with('success', 'Produk baru berhasil ditambahkan.');
     }
@@ -131,6 +138,11 @@ class ProductController extends Controller
 
         if ($validated['category'] === 'accessories' && empty($validated['sizes'])) {
             $validated['sizes'] = 'All Size';
+        }
+
+        // Hapus sizes dari array update jika kolom belum ada di database
+        if (!Schema::hasColumn('products', 'sizes')) {
+            unset($validated['sizes']);
         }
 
         $product->update($validated);

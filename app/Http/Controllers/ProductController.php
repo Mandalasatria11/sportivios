@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -63,7 +64,7 @@ class ProductController extends Controller
 
         // 4. Filter Ukuran (Size)
         $selectedSizes = array_filter((array)$request->input('size', []));
-        if (!empty($selectedSizes)) {
+        if (!empty($selectedSizes) && Schema::hasColumn('products', 'sizes')) {
             $query->where(function ($q) use ($selectedSizes) {
                 foreach ($selectedSizes as $sz) {
                     $q->orWhere('sizes', 'like', "%{$sz}%");
@@ -220,7 +221,7 @@ class ProductController extends Controller
         // 5. Simpan transaksi ke database menggunakan Eloquent ORM
         $size = $request->input('size') ?: $product->default_size;
 
-        $transaction = Transaction::create([
+        $txData = [
             'invoice_code' => $invoiceCode,
             'user_id' => Auth::id(), // terisi otomatis jika login
             'product_id' => $product->id,
@@ -230,10 +231,16 @@ class ProductController extends Controller
             'courier' => $courier,
             'shipping_cost' => $shippingCost,
             'quantity' => $quantity,
-            'size' => $size,
             'total_price' => $totalPrice,
             'status' => 'diproses',
-        ]);
+        ];
+
+        // Pastikan kolom size hanya dikirim jika tabel transactions memilikinya
+        if (Schema::hasColumn('transactions', 'size')) {
+            $txData['size'] = $size;
+        }
+
+        $transaction = Transaction::create($txData);
 
         // Bersihkan session cart jika ada
         session()->forget('cart');
