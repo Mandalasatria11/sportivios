@@ -1,4 +1,4 @@
-<x-layouts.admin title="Ubah Produk">
+<x-layouts.admin title="Edit Produk">
     <x-slot:pageHeader>
         UBAH DATA PRODUK: {{ strtoupper($product->name) }}
     </x-slot:pageHeader>
@@ -23,6 +23,7 @@
         @endif
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xs">
+            <!-- Form Edit Produk dengan enctype multipart/form-data -->
             <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -30,26 +31,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <!-- Nama Produk -->
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="name" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Nama Produk <span class="text-rose-500">*</span>
                         </label>
                         <input
                             type="text"
                             name="name"
+                            id="name"
                             value="{{ old('name', $product->name) }}"
                             required
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                         >
                     </div>
 
-                    <!-- Kategori -->
+                    <!-- Kategori Utama -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="category" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Kategori Utama <span class="text-rose-500">*</span>
                         </label>
                         <select
                             name="category"
-                            id="categorySelect"
+                            id="category"
                             onchange="updateSizePresets(this.value)"
                             required
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
@@ -62,12 +64,13 @@
 
                     <!-- Sub Kategori -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="sub_category" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Sub-Kategori / Tagline
                         </label>
                         <input
                             type="text"
                             name="sub_category"
+                            id="sub_category"
                             value="{{ old('sub_category', $product->sub_category) }}"
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                         >
@@ -76,7 +79,7 @@
                     <!-- Pengaturan Ukuran (Size System) -->
                     <div class="sm:col-span-2 p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-3">
                         <div class="flex items-center justify-between">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400">
+                            <label for="sizesInput" class="block text-xs font-bold uppercase tracking-wider text-cyan-400">
                                 📏 Sistem Pilihan Ukuran Produk
                             </label>
                             <span id="sizeCategoryHint" class="text-[11px] text-slate-400 font-mono">
@@ -89,7 +92,7 @@
                                 type="text"
                                 name="sizes"
                                 id="sizesInput"
-                                value="{{ old('sizes', implode(', ', $product->available_sizes)) }}"
+                                value="{{ old('sizes', is_array($product->available_sizes) ? implode(', ', $product->available_sizes) : ($product->sizes ?? '')) }}"
                                 placeholder="Contoh: 39, 40, 41, 42 atau S, M, L, XL atau All Size"
                                 class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 font-mono focus:outline-none focus:ring-1 focus:ring-cyan-500"
                             >
@@ -125,14 +128,15 @@
                         </div>
                     </div>
 
-                    <!-- Harga (IDR) -->
+                    <!-- Harga Satuan (IDR) -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="price" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Harga Satuan (IDR) <span class="text-rose-500">*</span>
                         </label>
                         <input
                             type="number"
                             name="price"
+                            id="price"
                             value="{{ old('price', $product->price) }}"
                             min="0"
                             step="1000"
@@ -143,12 +147,13 @@
 
                     <!-- Stok Saat Ini -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="stock" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Stok Saat Ini <span class="text-rose-500">*</span>
                         </label>
                         <input
                             type="number"
                             name="stock"
+                            id="stock"
                             value="{{ old('stock', $product->stock) }}"
                             min="0"
                             required
@@ -156,27 +161,29 @@
                         >
                     </div>
 
-                    <!-- Badge Promo -->
+                    <!-- Label Badge -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="badge" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Label Badge (Opsional)
                         </label>
                         <input
                             type="text"
                             name="badge"
+                            id="badge"
                             value="{{ old('badge', $product->badge) }}"
                             placeholder="Contoh: NEW, SALE, POPULAR"
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                         >
                     </div>
 
-                    <!-- Badge Type -->
+                    <!-- Warna Badge -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="badge_type" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Warna Badge
                         </label>
                         <select
                             name="badge_type"
+                            id="badge_type"
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
                         >
                             <option value="cyan" {{ old('badge_type', $product->badge_type) === 'cyan' ? 'selected' : '' }}>Cyan Glow (New/Popular)</option>
@@ -184,34 +191,54 @@
                         </select>
                     </div>
 
-                    <!-- Upload Foto Gambar Baru & Pratinjau -->
+                    <!-- Foto Saat Ini & Input File Foto Baru (Opsional) -->
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                            Foto Produk (Ganti jika ingin diperbarui)
+                            Foto Produk
                         </label>
-                        <div class="flex items-center space-x-4 mb-2">
-                            <div class="w-16 h-16 bg-slate-800 border border-slate-700 rounded-xl p-1 flex items-center justify-center">
-                                <img src="{{ asset($product->image ?? 'images/products/shoe.jpg') }}" alt="{{ $product->name }}" class="w-full h-full object-contain">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-slate-950/70 border border-slate-800 rounded-xl">
+                            <!-- Thumbnail Foto Saat Ini -->
+                            <div class="flex items-center space-x-3.5">
+                                <div class="w-20 h-20 bg-slate-800 border border-slate-700 rounded-xl p-1.5 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-inner">
+                                    <img
+                                        src="{{ $product->image_url }}"
+                                        alt="{{ $product->name }}"
+                                        class="w-full h-full object-contain"
+                                    >
+                                </div>
+                                <div class="text-xs">
+                                    <span class="font-bold text-slate-300 block">Foto Saat Ini:</span>
+                                    <span class="text-slate-400 font-mono text-[11px] break-all">{{ $product->image ?? 'Belum ada foto' }}</span>
+                                </div>
                             </div>
-                            <div class="flex-1">
+
+                            <!-- Input File Foto Baru -->
+                            <div class="flex-1 border-t sm:border-t-0 sm:border-l border-slate-800 pt-3 sm:pt-0 sm:pl-4">
+                                <label for="image" class="block text-xs font-semibold text-slate-300 mb-1">
+                                    Unggah Foto Baru
+                                </label>
                                 <input
                                     type="file"
                                     name="image"
-                                    accept="image/*"
+                                    id="image"
+                                    accept="image/jpeg,image/png,image/jpg,image/webp"
                                     class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-cyan-400 hover:file:bg-slate-700 cursor-pointer"
                                 >
-                                <p class="text-[11px] text-slate-500 mt-1">Biarkan kosong jika tetap memakai foto saat ini.</p>
+                                <p class="text-[11px] text-slate-400 mt-1.5">
+                                    Unggah foto bersifat opsional (kosongkan jika tidak ingin mengganti foto).
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Deskripsi Lengkap -->
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        <label for="description" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                             Deskripsi Produk <span class="text-rose-500">*</span>
                         </label>
                         <textarea
                             name="description"
+                            id="description"
                             rows="4"
                             required
                             class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-none"
@@ -219,6 +246,7 @@
                     </div>
                 </div>
 
+                <!-- Tombol Aksi Form -->
                 <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
                     <a
                         href="{{ route('admin.products.index') }}"
@@ -243,6 +271,8 @@
             const input = document.getElementById('sizesInput');
             const hint = document.getElementById('sizeCategoryHint');
             const explain = document.getElementById('sizeExplain');
+            if (!input || !hint || !explain) return;
+
             if (cat === 'shoes') {
                 input.value = '39, 40, 41, 42, 43, 44';
                 hint.textContent = 'Mode: Sepatu Olahraga (Angka EU)';
@@ -259,7 +289,8 @@
         }
 
         function applySizePreset(val) {
-            document.getElementById('sizesInput').value = val;
+            const input = document.getElementById('sizesInput');
+            if (input) input.value = val;
         }
     </script>
 </x-layouts.admin>

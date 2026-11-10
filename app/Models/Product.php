@@ -164,4 +164,28 @@ class Product extends Model
             default => 'Spesifikasi Ukuran',
         };
     }
+
+    /**
+     * Dapatkan URL aset gambar produk secara otomatis (mendukung public/assets/images dan public/images/products).
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->image)) {
+            return asset('images/products/shoe.jpg');
+        }
+
+        if (file_exists(public_path('assets/images/' . $this->image))) {
+            return asset('assets/images/' . $this->image);
+        }
+
+        if (file_exists(public_path($this->image))) {
+            return asset($this->image);
+        }
+
+        if (file_exists(public_path('images/products/' . $this->image))) {
+            return asset('images/products/' . $this->image);
+        }
+
+        return asset('assets/images/' . $this->image);
+    }
 }

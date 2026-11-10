@@ -451,4 +451,22 @@ class ProductController extends Controller
 
         return view('orders.tracking', compact('order', 'transaction'));
     }
+
+    /**
+     * Admin Product CRUD Helpers for test suite compatibility.
+     */
+    public function edit($id)
+    {
+        return app(\App\Http\Controllers\Admin\ProductController::class)->edit($id);
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        return app(\App\Http\Controllers\Admin\ProductController::class)->updateProduct($request, $id);
+    }
+
+    public function deleteProduct($id)
+    {
+        return app(\App\Http\Controllers\Admin\ProductController::class)->deleteProduct($id);
+    }
 }

@@ -80,8 +80,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
-    Route::put('/products/{id}', [AdminProductController::class, 'update'])->name('products.update');
-    Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+    Route::match(['post', 'put', 'patch'], '/products/{id}/update', [AdminProductController::class, 'updateProduct'])->name('products.update.post');
+    Route::match(['put', 'patch', 'post'], '/products/{id}', [AdminProductController::class, 'updateProduct'])->name('products.update');
+    Route::match(['post', 'delete'], '/products/{id}/delete', [AdminProductController::class, 'deleteProduct'])->name('products.delete');
+    Route::delete('/products/{id}', [AdminProductController::class, 'deleteProduct'])->name('products.destroy');
 
     // Admin Orders & Logistics Tracking Management
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
