@@ -23,6 +23,22 @@ class Product extends Model
     ];
 
     /**
+     * Pastikan kolom sizes hanya diisi jika kolomnya benar-benar ada di tabel database MySQL.
+     */
+    public function getFillable()
+    {
+        $fillable = $this->fillable;
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasColumn($this->getTable(), 'sizes')) {
+                return array_values(array_diff($fillable, ['sizes']));
+            }
+        } catch (\Throwable $e) {
+            // Silently ignore
+        }
+        return $fillable;
+    }
+
+    /**
      * Relasi ke model Transaction (One-to-Many).
      */
     public function transactions()
