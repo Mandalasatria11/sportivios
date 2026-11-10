@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -69,8 +70,12 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $fileName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/products'), $fileName);
-            $imagePath = 'images/products/' . $fileName;
+            $destination = public_path('assets/images');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            $file->move($destination, $fileName);
+            $imagePath = $fileName;
         }
 
         $sizes = $request->input('sizes');
@@ -97,7 +102,7 @@ class ProductController extends Controller
 
         Product::create($productData);
 
-        return redirect()->route('admin.products.index')->with('success', 'Produk baru berhasil ditambahkan.');
+        return redirect('/admin/products')->with('success', 'Produk baru berhasil ditambahkan.');
     }
 
     /**
@@ -106,16 +111,22 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
+
+        if (view()->exists('admin.edit_product')) {
+            return view('admin.edit_product', compact('product'));
+        }
+
         return view('admin.products.edit', compact('product'));
     }
 
     /**
-     * Perbarui data produk di database.
+     * Perbarui data produk di database (Fungsi updateProduct).
      */
-    public function update(Request $request, $id)
+    public function updateProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
+        // 1. Validasi Input (Aturan validasi gambar WAJIB bersifat opsional)
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|in:shoes,apparel,accessories',
@@ -129,11 +140,36 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
+        // 2. Conditional Image Upload & Cleanup
         if ($request->hasFile('image')) {
+            // Hapus gambar fisik lama dari server jika ada
+            if (!empty($product->image)) {
+                $oldAssetPath = public_path('assets/images/' . $product->image);
+                if (file_exists($oldAssetPath) && is_file($oldAssetPath)) {
+                    File::delete($oldAssetPath);
+                }
+
+                $oldDirectPath = public_path($product->image);
+                $protectedImages = ['shoe.jpg', 'shoe-action.jpg', 'shoe-sole.jpg', 'shoe-heel.jpg', 'tee.jpg', 'tights.jpg', 'jacket.jpg', 'flask.jpg', 'gloves.png', 'shoe.png'];
+                if (file_exists($oldDirectPath) && is_file($oldDirectPath) && !in_array(basename($oldDirectPath), $protectedImages)) {
+                    File::delete($oldDirectPath);
+                }
+            }
+
+            // Simpan gambar baru ke folder public/assets/images/ dengan nama unik
             $file = $request->file('image');
             $fileName = time() . '_' . Str::slug($validated['name']) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/products'), $fileName);
-            $validated['image'] = 'images/products/' . $fileName;
+            $destination = public_path('assets/images');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            $file->move($destination, $fileName);
+
+            // Masukkan nama file baru ke dalam data yang akan di-update
+            $validated['image'] = $fileName;
+        } else {
+            // Pertahankan nama file gambar lama (jangan ubah kolom gambar di database)
+            unset($validated['image']);
         }
 
         if ($validated['category'] === 'accessories' && empty($validated['sizes'])) {
@@ -145,19 +181,56 @@ class ProductController extends Controller
             unset($validated['sizes']);
         }
 
+        // 3. Simpan perubahan ke database dan redirect kembali ke /admin/products dengan session flash
         $product->update($validated);
 
-        return redirect()->route('admin.products.index')->with('success', 'Data produk berhasil diperbarui.');
+        return redirect('/admin/products')->with('success', 'Data produk berhasil diperbarui.');
     }
 
     /**
-     * Hapus produk dari database.
+     * Alias method untuk RESTful update.
+     */
+    public function update(Request $request, $id)
+    {
+        return $this->updateProduct($request, $id);
+    }
+
+    /**
+     * Hapus produk dari database (Fungsi deleteProduct).
+     */
+    public function deleteProduct($id)
+    {
+        // 1. Temukan produk berdasarkan ID
+        $product = Product::findOrFail($id);
+
+        // 2. Sebelum menghapus data dari database, hapus file gambar fisik dari folder server
+        if (!empty($product->image)) {
+            $assetPath = public_path('assets/images/' . $product->image);
+            if (file_exists($assetPath) && is_file($assetPath)) {
+                File::delete($assetPath);
+            }
+
+            $directPath = public_path($product->image);
+            $protectedImages = ['shoe.jpg', 'shoe-action.jpg', 'shoe-sole.jpg', 'shoe-heel.jpg', 'tee.jpg', 'tights.jpg', 'jacket.jpg', 'flask.jpg', 'gloves.png', 'shoe.png'];
+            if (file_exists($directPath) && is_file($directPath) && !in_array(basename($directPath), $protectedImages)) {
+                File::delete($directPath);
+            }
+        }
+
+        $productName = $product->name;
+
+        // 3. Jalankan $product->delete() untuk menghapus record dari MySQL
+        $product->delete();
+
+        // 4. Lakukan redirect kembali ke /admin/products dengan flash message sukses
+        return redirect('/admin/products')->with('success', "Produk \"{$productName}\" berhasil dihapus.");
+    }
+
+    /**
+     * Alias method untuk RESTful destroy.
      */
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
-        $product->delete();
-
-        return redirect()->route('admin.products.index')->with('success', "Produk \"{$product->name}\" berhasil dihapus.");
+        return $this->deleteProduct($id);
     }
 }

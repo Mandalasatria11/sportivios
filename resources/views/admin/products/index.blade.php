@@ -5,6 +5,27 @@
 
     <div class="space-y-6">
 
+        <!-- Pesan Notifikasi Sukses / Alert Flash Message -->
+        @if(session('success'))
+            <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between shadow-xs">
+                <span class="flex items-center space-x-2">
+                    <span>✅</span>
+                    <span>{{ session('success') }}</span>
+                </span>
+                <button onclick="this.parentElement.remove()" class="text-emerald-300 hover:text-white font-bold px-2 py-0.5">&times;</button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="p-4 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between shadow-xs">
+                <span class="flex items-center space-x-2">
+                    <span>⚠️</span>
+                    <span>{{ session('error') }}</span>
+                </span>
+                <button onclick="this.parentElement.remove()" class="text-rose-300 hover:text-white font-bold px-2 py-0.5">&times;</button>
+            </div>
+        @endif
+
         <!-- Top Action Bar: Search, Category Filter, and Add Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-wrap items-center gap-2 flex-1 max-w-xl">
@@ -64,9 +85,9 @@
                                 <!-- Image & Title -->
                                 <td class="py-3 px-5">
                                     <div class="flex items-center space-x-3.5">
-                                        <div class="w-12 h-12 bg-slate-800 rounded-lg p-1 flex-shrink-0 flex items-center justify-center border border-slate-700">
+                                        <div class="w-12 h-12 bg-slate-800 rounded-lg p-1 flex-shrink-0 flex items-center justify-center border border-slate-700 overflow-hidden">
                                             <img
-                                                src="{{ asset($product->image ?? 'images/products/shoe.jpg') }}"
+                                                src="{{ $product->image_url }}"
                                                 alt="{{ $product->name }}"
                                                 class="w-full h-full object-contain"
                                             >
@@ -113,26 +134,36 @@
                                     @endif
                                 </td>
 
-                                <!-- Actions -->
+                                <!-- Actions: Tombol Lihat, Edit, dan Hapus -->
                                 <td class="py-3 px-5 text-right">
                                     <div class="flex items-center justify-end space-x-2">
+                                        <!-- Tombol Lihat -->
                                         <a
                                             href="{{ route('products.show', $product->id) }}"
                                             target="_blank"
-                                            class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition"
-                                            title="Lihat di Toko"
+                                            class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg font-bold text-xs transition border border-slate-700 inline-flex items-center space-x-1"
+                                            title="Lihat Produk di Toko"
                                         >
-                                            👁️
+                                            <span>👁️</span>
+                                            <span>Lihat</span>
                                         </a>
+
+                                        <!-- Tombol Edit -->
                                         <a
                                             href="{{ route('admin.products.edit', $product->id) }}"
-                                            class="px-2.5 py-1.5 bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 rounded-lg font-bold text-xs transition"
+                                            class="px-2.5 py-1.5 bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 rounded-lg font-bold text-xs transition border border-cyan-500/30"
                                         >
                                             Edit
                                         </a>
-                                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk {{ $product->name }}?')">
+
+                                        <!-- Tombol Hapus dengan Dialog Konfirmasi JavaScript -->
+                                        <form
+                                            action="{{ route('admin.products.delete', $product->id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini beserta gambarnya?');"
+                                            class="inline-block"
+                                        >
                                             @csrf
-                                            @method('DELETE')
                                             <button
                                                 type="submit"
                                                 class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-400 rounded-lg font-bold text-xs transition border border-rose-500/30"
